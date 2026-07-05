@@ -5,6 +5,14 @@ Front matter generation for Hugo content pages.
 from typing import Dict, Any, Optional
 from datetime import datetime
 
+# Import kebab_case for generating GitHub anchors
+import os
+import sys
+scripts_dir = os.path.dirname(os.path.abspath(__file__))
+if scripts_dir not in sys.path:
+    sys.path.insert(0, scripts_dir)
+from utils import kebab_case
+
 
 def escape_yaml_string(value: str) -> str:
     """
@@ -57,9 +65,10 @@ def generate_front_matter(
 title: "{escaped_title}"
 weight: {weight}
 date: {date}
-license: "{license}"
-license_url: "{license_url}"
-source: "{source}"
+params:
+  license: "{license}"
+  license_url: "{license_url}"
+  source: "{source}"
 ---
 """
     return front_matter
@@ -68,15 +77,17 @@ source: "{source}"
 def get_source_url(
     file_path: str,
     line_number: Optional[int] = None,
-    is_subsection: bool = False
+    is_subsection: bool = False,
+    heading_text: Optional[str] = None
 ) -> str:
     """
-    Generate source URL based on file path and line number.
+    Generate source URL based on file path and heading anchor.
     
     Args:
         file_path: The source file path
-        line_number: Optional line number (1-based)
+        line_number: Optional line number (1-based) - for backward compatibility
         is_subsection: Whether this is from a sub-section file
+        heading_text: Optional heading text for generating anchor
     
     Returns:
         Source URL string
@@ -90,7 +101,13 @@ def get_source_url(
     else:
         url = f"{base_url}CleanABAP.md"
     
-    if line_number:
+    # Use heading anchor instead of line number if heading text is provided
+    if heading_text:
+        # Generate GitHub anchor format (lowercase, spaces to hyphens, no special chars)
+        anchor = kebab_case(heading_text)
+        url += f"#{anchor}"
+    elif line_number:
+        # Fallback to line number format for backward compatibility
         url += f"#L{line_number}"
     
     return url

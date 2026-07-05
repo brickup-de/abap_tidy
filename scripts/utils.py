@@ -29,11 +29,13 @@ def kebab_case(text: str) -> str:
     text = re.sub(r'([A-Z])([A-Z][a-z])', r'\1-\2', text)
     
     # Remove punctuation and special characters (but preserve hyphens)
-    text = re.sub(r'[\"\'`~!@#$%^&*()+={}\[\]|\\:;\"<>?,./\s]+', ' ', text)
+    text = re.sub(r'[\"`~!@#$%^&*()+={}\[\]|\\:;\"<>?,./\s]+', ' ', text)
     # Replace multiple spaces with single space
     text = re.sub(r'\s+', ' ', text)
     # Trim and lowercase
     text = text.strip().lower()
+    # Remove apostrophes completely first (before any other processing)
+    text = text.replace("'", '')
     # Replace spaces with hyphens
     text = text.replace(' ', '-')
     # Remove any remaining non-alphanumeric (except hyphens)

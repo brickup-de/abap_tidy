@@ -336,8 +336,9 @@ class ContentProcessor:
         # Generate front matter
         source_url = get_source_url(
             self.source_file,
-            heading['line'],
-            self.is_subsection
+            line_number=heading['line'],
+            is_subsection=self.is_subsection,
+            heading_text=heading['text']
         )
         
         front_matter = generate_front_matter(
