@@ -6,6 +6,25 @@ from typing import Dict, Any, Optional
 from datetime import datetime
 
 
+def escape_yaml_string(value: str) -> str:
+    """
+    Escape a string for YAML double-quoted scalar.
+    
+    Args:
+        value: The string to escape
+    
+    Returns:
+        Escaped string safe for YAML double-quoted scalars
+    """
+    # Escape backslashes first (before other escapes)
+    value = value.replace('\\', '\\\\')
+    # Escape double quotes
+    value = value.replace('"', '\\"')
+    # Escape newlines
+    value = value.replace('\n', '\\n')
+    return value
+
+
 def generate_front_matter(
     title: str,
     weight: int,
@@ -31,8 +50,11 @@ def generate_front_matter(
     if date is None:
         date = datetime.now().strftime('%Y-%m-%d')
     
+    # Escape the title for YAML
+    escaped_title = escape_yaml_string(title)
+    
     front_matter = f"""---
-title: "{title}"
+title: "{escaped_title}"
 weight: {weight}
 date: {date}
 license: "{license}"
