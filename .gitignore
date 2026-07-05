@@ -6,6 +6,9 @@
 # Python files
 __pycache__
 
+# generated content
+/content/clean-code
+
 # IDE and editor files
 .idea/
 .vscode/

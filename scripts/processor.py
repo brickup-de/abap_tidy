@@ -18,6 +18,9 @@ from utils import (
 )
 from frontmatter import generate_front_matter, get_source_url, get_root_source_url
 from crossref import CrossReferenceConverter, build_path_mapping
+import os
+import shutil
+import re
 
 
 class ContentProcessor:
@@ -347,10 +350,13 @@ class ContentProcessor:
         # Convert cross-references in content
         converted_content = converter.convert_content(heading['content'])
         
+        # Fix image references in the converted content
+        fixed_content = self._fix_image_references(converted_content, folder_path)
+        
         # Create the full content
         content = front_matter
-        if converted_content:
-            content += f"\n{converted_content}\n"
+        if fixed_content:
+            content += f"\n{fixed_content}\n"
         
         # Write to file
         ensure_directory(folder_path)
@@ -359,7 +365,94 @@ class ContentProcessor:
         with open(output_path, 'w', encoding='utf-8') as f:
             f.write(content)
         
+        # Copy images referenced in the content to the target folder
+        self._copy_images_for_content(folder_path, heading['content'])
+        
         return 1
+    
+    def _fix_image_references(self, content: str, folder_path: str) -> str:
+        """
+        Fix image references in content to use relative paths.
+        
+        Args:
+            content: Markdown content with image references
+            folder_path: The folder where the content will be written
+        
+        Returns:
+            Content with fixed image references
+        """
+        # Find all image references
+        image_pattern = r'!\[([^\]]*)\]\(([^)]+)\)'
+        
+        def fix_image_reference(match):
+            alt_text = match.group(1)
+            image_path = match.group(2)
+            
+            # Skip if it's already a URL or absolute path
+            if image_path.startswith('http://') or image_path.startswith('https://') or image_path.startswith('/'):
+                return match.group(0)
+            
+            # Extract filename from the path
+            filename = os.path.basename(image_path)
+            
+            # Convert to relative path (just the filename)
+            return f"![{alt_text}]({filename})"
+        
+        # Replace all image references
+        return re.sub(image_pattern, fix_image_reference, content)
+    
+    def _copy_images_for_content(self, target_folder: str, content: str) -> None:
+        """
+        Copy images referenced in content to the target folder.
+        
+        Args:
+            target_folder: Target folder where images should be copied
+            content: Markdown content that may contain image references
+        """
+        # Only copy images for sub-sections that have image directories
+        if not self.is_subsection:
+            return
+        
+        # Get the source directory for images
+        # For sub-sections, images are typically in a folder next to the markdown file
+        source_dir = os.path.dirname(self.source_file)
+        
+        # Find all image references in the content
+        image_refs = re.findall(r'!\[[^\]]*\]\(([^)]+)\)', content)
+        
+        for image_path in image_refs:
+            # Extract filename from path
+            filename = os.path.basename(image_path)
+            
+            # Only copy common image files
+            if not any(filename.lower().endswith(ext) for ext in ['.png', '.jpg', '.jpeg', '.gif', '.svg']):
+                continue
+            if filename.endswith('.vsdx'):  # Skip Visio files
+                continue
+            
+            # Try to find the image in the source directory or its subdirectories
+            source_path = None
+            
+            # First, try the full path from the reference
+            full_source_path = os.path.join(source_dir, image_path)
+            if os.path.exists(full_source_path):
+                source_path = full_source_path
+            else:
+                # Try just the filename in the source directory
+                test_source_path = os.path.join(source_dir, filename)
+                if os.path.exists(test_source_path):
+                    source_path = test_source_path
+                else:
+                    # Search recursively in the source directory
+                    for root, dirs, files in os.walk(source_dir):
+                        if filename in files:
+                            source_path = os.path.join(root, filename)
+                            break
+            
+            if source_path and os.path.exists(source_path):
+                target_path = os.path.join(target_folder, filename)
+                ensure_directory(target_folder)
+                shutil.copy2(source_path, target_path)
     
     def _calculate_weight(self, heading: Dict, structure: List[Dict]) -> int:
         """

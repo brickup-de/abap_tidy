@@ -202,105 +202,6 @@ def process_sub_sections(
     return all_sub_heading_data
 
 
-def fix_image_references(output_dir: str) -> int:
-    """
-    Fix image references in generated content files.
-    
-    Args:
-        output_dir: Base output directory
-    
-    Returns:
-        Number of image references fixed
-    """
-    count = 0
-    
-    # Walk through all _index.md files
-    for root, dirs, files in os.walk(output_dir):
-        for filename in files:
-            if filename == '_index.md':
-                filepath = os.path.join(root, filename)
-                
-                with open(filepath, 'r', encoding='utf-8') as f:
-                    content = f.read()
-                
-                # Find and replace image references
-                # Pattern: ![](interfaces-vs-abstract-classes/Image.png)
-                # Replace with: ![](Image.png)
-                import re
-                
-                new_content = content
-                # Remove path prefixes from image references
-                new_content = re.sub(
-                    r'\[!\[?\]?\]\([^)]*/([^)]+)\)',
-                    r'![\1)',
-                    new_content
-                )
-                
-                # Also handle cases with alt text for images only
-                # Only modify image references (start with !) and preserve regular links
-                new_content = re.sub(
-                    r'\[!([^\]]*)\]\(([^)]+)\)',
-                    lambda m: f"![{m.group(1)}]({m.group(2).split('/')[-1]})" 
-                        if '/' in m.group(2) and not (m.group(2).startswith('http') or m.group(2).startswith('/'))
-                        else m.group(0),
-                    new_content
-                )
-                
-                if new_content != content:
-                    with open(filepath, 'w', encoding='utf-8') as f:
-                        f.write(new_content)
-                    count += 1
-    
-    return count
-
-
-def fix_cross_references(output_dir: str, heading_data: List[Dict]) -> int:
-    """
-    Fix cross-references in generated content to use absolute paths.
-    
-    Args:
-        output_dir: Base output directory
-        heading_data: List of all heading data
-    
-    Returns:
-        Number of cross-references fixed
-    """
-    # Create a more comprehensive converter
-    converter = CrossReferenceConverter(build_path_mapping(heading_data))
-    
-    count = 0
-    
-    # Walk through all _index.md files
-    for root, dirs, files in os.walk(output_dir):
-        for filename in files:
-            if filename == '_index.md':
-                filepath = os.path.join(root, filename)
-                
-                with open(filepath, 'r', encoding='utf-8') as f:
-                    content = f.read()
-                
-                # Find front matter end
-                front_matter_end = content.find('---\n', content.find('---\n') + 4)
-                if front_matter_end == -1:
-                    front_matter_end = 0
-                else:
-                    front_matter_end += 4
-                
-                # Get the content after front matter
-                body_content = content[front_matter_end:]
-                
-                # Convert cross-references in body
-                new_body = converter.convert_content(body_content)
-                
-                if new_body != body_content:
-                    new_content = content[:front_matter_end] + new_body
-                    with open(filepath, 'w', encoding='utf-8') as f:
-                        f.write(new_content)
-                    count += 1
-    
-    return count
-
-
 def main():
     """
     Main function to run the conversion.
@@ -364,35 +265,8 @@ def main():
     with open(os.path.join(deep_dives_path, '_index.md'), 'w', encoding='utf-8') as f:
         f.write(deep_dives_content)
     
-    # Copy images
-    image_source = os.path.join(
-        repo_root,
-        'assets',
-        'sources',
-        'sap-styleguides',
-        'clean-abap',
-        'sub-sections',
-        'interfaces-vs-abstract-classes'
-    )
-    
-    image_target = os.path.join(
-        output_dir,
-        'deep-dives',
-        'interfaces-vs-abstract-classes'
-    )
-    
-    if os.path.exists(image_source):
-        ensure_directory(image_target)
-        image_count = copy_images(image_source, image_target)
-        print(f"Copied {image_count} images")
-    
-    # Fix image references
-    image_fix_count = fix_image_references(output_dir)
-    print(f"Fixed {image_fix_count} image references")
-    
-    # Fix cross-references
-    crossref_fix_count = fix_cross_references(output_dir, main_heading_data)
-    print(f"Fixed {crossref_fix_count} cross-references")
+    # Note: Images are now copied during content processing in the processor
+    # Cross-references are also fixed during content processing
     
     # Print summary
     total_files = 0

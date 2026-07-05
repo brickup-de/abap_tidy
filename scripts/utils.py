@@ -161,17 +161,30 @@ def remove_breadcrumb_lines(lines: List[str]) -> List[str]:
 def remove_toc_section(lines: List[str]) -> List[str]:
     """
     Remove the entire TOC section (## Content until next ## heading).
+    Also removes bullet-point TOC sections in sub-sections.
     """
     result = []
     i = 0
     in_toc = False
+    in_bullet_toc = False
     
     while i < len(lines):
         line = lines[i]
+        stripped = line.strip()
         
-        # Check if we're at the start of TOC
+        # Check if we're at the start of TOC (## Content)
         if get_heading_level(line) == 2 and 'Content' in clean_heading_text(line):
             in_toc = True
+            i += 1
+            continue
+        
+        # Check if we're at the start of a bullet-point TOC section
+        # This appears in sub-sections like: - [Abstract](#abstract)
+        # Look for a line that starts with "- [" and contains "](#" 
+        if (stripped.startswith('- [') and '#' in stripped and 
+            i > 0 and lines[i-1].strip() == '' and 
+            not (i > 1 and lines[i-2].strip().startswith('- ['))):
+            in_bullet_toc = True
             i += 1
             continue
         
@@ -181,6 +194,32 @@ def remove_toc_section(lines: List[str]) -> List[str]:
             result.append(line)  # Keep the new heading
             i += 1
             continue
+        
+        # If we're in bullet TOC, check if we've reached a heading or end of TOC
+        if in_bullet_toc:
+            # Check if this is a heading (starts with #) - this ends the TOC
+            if get_heading_level(line) is not None:
+                in_bullet_toc = False
+                result.append(line)  # Keep the heading
+                i += 1
+                continue
+            # Check if this is another TOC bullet point
+            elif stripped.startswith('- [') and '#' in stripped:
+                # Still in TOC, skip it
+                i += 1
+                continue
+            # Check if this is an empty line followed by a heading
+            elif stripped == '' and i + 1 < len(lines) and get_heading_level(lines[i+1]) is not None:
+                in_bullet_toc = False
+                result.append(line)  # Keep the blank line
+                i += 1
+                continue
+            else:
+                # Keep the line but end TOC mode
+                in_bullet_toc = False
+                result.append(line)
+                i += 1
+                continue
         
         # Skip lines while in TOC
         if in_toc:
@@ -201,6 +240,14 @@ def remove_cheat_sheet_link(lines: List[str]) -> List[str]:
     return [line for line in lines if 'The [Cheat Sheet]' not in line]
 
 
+def remove_back_to_guide_links(lines: List[str]) -> List[str]:
+    """
+    Remove the "Back to the guide" navigation links.
+    Pattern: > [Back to the guide](../CleanABAP.md)
+    """
+    return [line for line in lines if '> [Back to the guide]' not in line]
+
+
 def clean_source_content(lines: List[str]) -> List[str]:
     """
     Apply all content cleaning steps:
@@ -208,11 +255,13 @@ def clean_source_content(lines: List[str]) -> List[str]:
     2. Remove breadcrumb navigation lines
     3. Remove TOC section
     4. Remove cheat sheet link
+    5. Remove "Back to the guide" links
     """
     lines = remove_language_nav(lines)
     lines = remove_breadcrumb_lines(lines)
     lines = remove_toc_section(lines)
     lines = remove_cheat_sheet_link(lines)
+    lines = remove_back_to_guide_links(lines)
     return lines
 
 
