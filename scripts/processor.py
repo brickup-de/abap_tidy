@@ -353,6 +353,9 @@ class ContentProcessor:
         # Fix image references in the converted content
         fixed_content = self._fix_image_references(converted_content, folder_path)
         
+        # Fix 'below' references that are now inaccurate after content splitting
+        fixed_content = self._fix_below_references(fixed_content)
+        
         # Create the full content
         content = front_matter
         if fixed_content:
@@ -401,6 +404,33 @@ class ContentProcessor:
         # Replace all image references
         return re.sub(image_pattern, fix_image_reference, content)
     
+    def _fix_below_references(self, content: str) -> str:
+        """
+        Fix references to 'below' that are now inaccurate after content splitting.
+        """
+        content = re.sub(
+            r'\b(suggestions)\s+below\b',
+            r'\1 on this site',
+            content,
+            flags=re.IGNORECASE
+        )
+
+        content = re.sub(
+            r'\b(recommendations)\s+below\b',
+            r'\1 on this site',
+            content,
+            flags=re.IGNORECASE
+        )
+        
+        content = re.sub(
+            r'\b(detailed\s+)?rules\s+below\b',
+            r'related rules',
+            content,
+            flags=re.IGNORECASE
+        )
+        
+        return content
+
     def _copy_images_for_content(self, target_folder: str, content: str) -> None:
         """
         Copy images referenced in content to the target folder.
