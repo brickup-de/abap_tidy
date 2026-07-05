@@ -1,0 +1,48 @@
+baseURL = "http://localhost:1313/"
+languageCode = "en-us"
+title = "Clean ABAP"
+
+# Site parameters
+[params]
+  description = "Clean Code guidelines for ABAP development"
+  author = "SAP Styleguides"
+
+# Menu configuration
+[[menu.main]]
+  name = "Home"
+  url = "/"
+  weight = 1
+
+[[menu.main]]
+  name = "Clean ABAP"
+  url = "/clean-code/"
+  weight = 2
+
+# Markup configuration
+[markup]
+  [markup.goldmark]
+    [markup.goldmark.renderer]
+      unsafe = true  # Allow HTML in markdown
+  
+  [markup.highlight]
+    style = "github"
+    lineNumbersInTable = false
+
+# Taxonomies
+[taxonomies]
+  tag = "tags"
+  category = "categories"
+
+# Output formats
+[outputs]
+  home = ["HTML", "RSS"]
+  page = ["HTML"]
+  section = ["HTML"]
+
+# Pagination
+[pagination]
+  pages = 10
+
+# Enable Git info for last modified dates
+[frontmatter]
+  lastmod = [":git", "lastmod", "date", ":fileModTime"]

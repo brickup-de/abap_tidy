@@ -1,0 +1,23 @@
+{{ define "title" }}{{ .Title }} | {{ .Site.Title }}{{ end }}
+
+{{ define "main" }}
+  <article>
+    <h1>{{ .Title }}</h1>
+    {{ if .Params.date }}
+      <time datetime="{{ .Params.date }}" style="color: #666; font-size: 0.9em;">
+        {{ .Params.date | dateFormat "January 2, 2006" }}
+      </time>
+    {{ end }}
+    
+    {{ if .Params.license }}
+      <p style="font-size: 0.8em; color: #666; margin-top: 10px;">
+        License: <a href="{{ .Params.license_url }}">{{ .Params.license }}</a>
+        {{ if .Params.source }}| <a href="{{ .Params.source }}">Source</a>{{ end }}
+      </p>
+    {{ end }}
+    
+    <div style="margin-top: 20px;">
+      {{ .Content }}
+    </div>
+  </article>
+{{ end }}

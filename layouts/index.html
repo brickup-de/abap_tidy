@@ -1,0 +1,23 @@
+{{ define "title" }}{{ .Site.Title }}{{ end }}
+
+{{ define "main" }}
+  <div style="padding: 20px;">
+    {{ .Content }}
+    
+    {{ if .Site.Pages }}
+      <h2 style="margin-top: 30px; color: #0066cc;">Sections</h2>
+      <ul style="list-style: none; padding: 0;">
+        {{ range .Site.Pages }}
+          {{ if eq .Kind "section" }}
+            <li style="margin-bottom: 15px;">
+              <a href="{{ .RelPermalink }}" style="color: #0066cc; font-weight: bold; font-size: 1.1em;">{{ .Title }}</a>
+              {{ if .Params.description }}
+                <p style="margin: 5px 0 0 20px; color: #666;">{{ .Params.description }}</p>
+              {{ end }}
+            </li>
+          {{ end }}
+        {{ end }}
+      </ul>
+    {{ end }}
+  </div>
+{{ end }}

@@ -1,0 +1,20 @@
+# Hugo files
+/public/
+.hugo_build.lock
+/resources/
+
+# Python files
+__pycache__
+
+# IDE and editor files
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
