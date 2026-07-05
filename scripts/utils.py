@@ -248,15 +248,93 @@ def remove_back_to_guide_links(lines: List[str]) -> List[str]:
     return [line for line in lines if '> [Back to the guide]' not in line]
 
 
+def resolve_reference_links(lines: List[str]) -> List[str]:
+    """
+    Resolve reference-style markdown links to inline links.
+    Reference-style links look like: [text][ref], [text][], or [text]
+    Reference definitions look like: [ref]: url
+    
+    This function replaces reference-style links with inline links.
+    """
+    # First, collect all reference definitions
+    references = {}
+    
+    for line in lines:
+        # Match reference definition pattern: [id]: url
+        # The id can contain various characters, and there may be optional whitespace
+        match = re.match(r'^\[([^\]]+)\]\s*:\s*(.+?)\s*$', line)
+        if match:
+            ref_id = match.group(1)
+            url = match.group(2).strip()
+            references[ref_id] = url
+    
+    if not references:
+        # No references to resolve, return original
+        return lines
+    
+    # Now replace reference-style links in all lines
+    result = []
+    for line in lines:
+        # Skip reference definition lines (they'll be removed anyway)
+        if re.match(r'^\[([^\]]+)\]\s*:\s*', line):
+            continue
+        
+        # Replace [text][ref] with [text](url)
+        # Pattern 1: [text][ref] where ref is explicitly specified
+        def replace_ref_link(match):
+            link_text = match.group(1)
+            ref_id = match.group(2)
+            if ref_id in references:
+                return f'[{link_text}]({references[ref_id]})'
+            # If reference not found, keep original
+            return match.group(0)
+        
+        line = re.sub(r'\[([^\]]+)\]\[([^\]]+)\]', replace_ref_link, line)
+        
+        # Pattern 2: [text][] where ref_id equals text
+        def replace_implicit_ref_link(match):
+            link_text = match.group(1)
+            if link_text in references:
+                return f'[{link_text}]({references[link_text]})'
+            # If reference not found, keep original
+            return match.group(0)
+        
+        line = re.sub(r'\[([^\]]+)\]\[\]', replace_implicit_ref_link, line)
+        
+        # Pattern 3: [text] when there's a reference definition for that exact text
+        # This handles the shorthand form where [text] alone is treated as a link
+        # We need to be careful to only replace this when it's NOT part of:
+        # - [text](url) - inline link
+        # - [text][ref] - reference link
+        # - [text][] - implicit reference link
+        # Use negative lookahead to avoid matching these cases
+        def replace_shorthand_ref_link(match):
+            link_text = match.group(1)
+            if link_text in references:
+                return f'[{link_text}]({references[link_text]})'
+            # If reference not found, keep original
+            return match.group(0)
+        
+        # Match [text] only if NOT followed by (, [, or ]
+        # The pattern uses negative lookahead: (?![...])
+        line = re.sub(r'\[([^\]]+)\](?![\]\(\[])', replace_shorthand_ref_link, line)
+        
+        result.append(line)
+    
+    return result
+
+
 def clean_source_content(lines: List[str]) -> List[str]:
     """
     Apply all content cleaning steps:
-    1. Remove language navigation block
-    2. Remove breadcrumb navigation lines
-    3. Remove TOC section
-    4. Remove cheat sheet link
-    5. Remove "Back to the guide" links
+    1. Resolve reference-style links to inline links
+    2. Remove language navigation block
+    3. Remove breadcrumb navigation lines
+    4. Remove TOC section
+    5. Remove cheat sheet link
+    6. Remove "Back to the guide" links
     """
+    lines = resolve_reference_links(lines)
     lines = remove_language_nav(lines)
     lines = remove_breadcrumb_lines(lines)
     lines = remove_toc_section(lines)
