@@ -210,8 +210,19 @@ class ContentProcessor:
                 # This will be placed under the sub-section folder
                 self.structure.append(heading_info)
             elif actual_level == 2:
-                # Second-level heading - add to root structure
-                self.structure.append(heading_info)
+                # For main content, level 2 goes to root structure
+                # For sub-sections, level 2 should be children of level 1
+                if self.is_subsection:
+                    # Find the level 1 parent (should be the first item in structure for sub-sections)
+                    for item in reversed(self.structure):
+                        if item['level'] == 1:
+                            if 'children' not in item:
+                                item['children'] = []
+                            item['children'].append(heading_info)
+                            break
+                else:
+                    # For main content, add to root structure
+                    self.structure.append(heading_info)
             else:
                 # Nested heading - find parent and add as child
                 parent_level = actual_level - 1
@@ -275,21 +286,49 @@ class ContentProcessor:
         
         return 1
     
+    def _has_children(self, heading: Dict) -> bool:
+        """
+        Check if a heading has children in the structure.
+        
+        Args:
+            heading: The heading to check
+            
+        Returns:
+            True if the heading has children, False otherwise
+        """
+        # Check if this heading exists in the structure and has children
+        for item in self.structure:
+            if item['path_parts'] == heading['path_parts']:
+                return 'children' in item and len(item['children']) > 0
+        
+        # For headings not in structure (like level 3+), check if there are any other headings
+        # that have this heading's path as a prefix (indicating they are children)
+        for other_heading in self.all_headings:
+            if (other_heading != heading and 
+                other_heading['path_parts'] and heading['path_parts'] and
+                len(other_heading['path_parts']) > len(heading['path_parts']) and
+                other_heading['path_parts'][:len(heading['path_parts'])] == heading['path_parts']):
+                return True
+        
+        return False
+
     def _generate_heading_file(
         self,
         heading: Dict,
         converter: CrossReferenceConverter
     ) -> int:
         """
-        Generate a Hugo _index.md file for a heading.
+        Generate a Hugo file for a heading.
+        Leaf pages (without children) are named index.md, 
+        non-leaf pages (with children) are named _index.md.
         """
         # Build the path
         if self.is_subsection:
             # For sub-sections, the base_path already includes the sub-section folder
-            # For level 1 headings, we want to create the _index.md in the base_dir
+            # For level 1 headings, we want to create the file in the base_dir
             # For level 2+ headings, we want to create subfolders
             if heading['level'] == 1:
-                # Level 1 heading content goes in base_dir/_index.md
+                # Level 1 heading content goes in base_dir/
                 base_dir = self.base_path
                 path_parts = []
             else:
@@ -362,9 +401,14 @@ class ContentProcessor:
         if fixed_content:
             content += f"\n{fixed_content}\n"
         
+        # Determine filename based on whether this is a leaf or non-leaf page
+        # Leaf pages (without children) use index.md, non-leaf pages use _index.md
+        has_children = self._has_children(heading)
+        filename = '_index.md' if has_children else 'index.md'
+        
         # Write to file
         ensure_directory(folder_path)
-        output_path = os.path.join(folder_path, '_index.md')
+        output_path = os.path.join(folder_path, filename)
         
         with open(output_path, 'w', encoding='utf-8') as f:
             f.write(content)
