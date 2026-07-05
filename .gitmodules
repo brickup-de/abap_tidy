@@ -1,0 +1,9 @@
+[submodule "assets/sources/sap-styleguides"]
+	path = assets/sources/sap-styleguides
+	url = https://github.com/SAP/styleguides.git
+[submodule "assets/sources/sap-abap-cheat-sheets"]
+	path = assets/sources/sap-abap-cheat-sheets
+	url = https://github.com/SAP-samples/abap-cheat-sheets.git
+[submodule "assets/sources/dsag-abap-leitfaden"]
+	path = assets/sources/dsag-abap-leitfaden
+	url = https://github.com/1DSAG/ABAP-Leitfaden.git
