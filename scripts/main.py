@@ -3,9 +3,10 @@ Main script for converting Clean ABAP markdown to Hugo content structure.
 """
 
 import os
+import re
 import sys
 import shutil
-from typing import List, Dict
+from typing import List, Dict, Tuple
 
 from .utils import kebab_case, ensure_directory
 from .frontmatter import generate_front_matter, get_deep_dives_source_url
@@ -222,6 +223,46 @@ def run_conversion(repo_root: str, output_dir: str) -> None:
     # Cross-references are also fixed during content processing
 
 
+def find_internal_links(content: str) -> List[str]:
+    """
+    Extract internal /clean-code/... link targets from markdown content.
+    """
+    return [
+        target for _text, target in re.findall(r'\[([^\]]+)\]\(([^)]+)\)', content)
+        if target.startswith('/clean-code/')
+    ]
+
+
+def validate_cross_references(output_dir: str) -> List[Tuple[str, str]]:
+    """
+    Scan all generated markdown files for internal /clean-code/ links and
+    check that each one resolves to a generated page.
+
+    Returns:
+        List of (source_file, broken_link) pairs.
+    """
+    broken = []
+
+    for root, _dirs, files in os.walk(output_dir):
+        for filename in files:
+            if not filename.endswith('.md'):
+                continue
+            file_path = os.path.join(root, filename)
+            with open(file_path, 'r', encoding='utf-8') as f:
+                content = f.read()
+
+            for link in find_internal_links(content):
+                # Link targets look like "/clean-code/names/use-descriptive-names/";
+                # drop the leading "clean-code" segment since it's already output_dir.
+                sub_parts = link.strip('/').split('/')[1:]
+                target_dir = os.path.join(output_dir, *sub_parts) if sub_parts else output_dir
+                if not (os.path.isfile(os.path.join(target_dir, 'index.md')) or
+                        os.path.isfile(os.path.join(target_dir, '_index.md'))):
+                    broken.append((file_path, link))
+
+    return broken
+
+
 def print_summary(output_dir: str) -> None:
     """
     Print a summary of the generated content, including the folder structure.
@@ -255,6 +296,13 @@ def main():
 
     setup_output_dir(output_dir)
     run_conversion(repo_root, output_dir)
+
+    broken_links = validate_cross_references(output_dir)
+    if broken_links:
+        print(f"\nWarning: {len(broken_links)} internal link(s) do not resolve to a generated page:")
+        for file_path, link in broken_links:
+            print(f"  {os.path.relpath(file_path, output_dir)}: {link}")
+
     print_summary(output_dir)
 
 
