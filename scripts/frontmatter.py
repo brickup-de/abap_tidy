@@ -2,16 +2,10 @@
 Front matter generation for Hugo content pages.
 """
 
-from typing import Dict, Any, Optional
+from typing import Optional
 from datetime import datetime
 
-# Import kebab_case for generating GitHub anchors
-import os
-import sys
-scripts_dir = os.path.dirname(os.path.abspath(__file__))
-if scripts_dir not in sys.path:
-    sys.path.insert(0, scripts_dir)
-from utils import kebab_case
+from .utils import kebab_case
 
 
 def escape_yaml_string(value: str) -> str:

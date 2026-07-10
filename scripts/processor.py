@@ -4,23 +4,16 @@ Handles parsing markdown files and splitting by heading hierarchy.
 """
 
 import os
-import sys
-from typing import List, Dict, Any, Tuple, Optional
+import shutil
+import re
+from typing import List, Dict, Tuple
 
-# Ensure we can import from the scripts directory
-scripts_dir = os.path.dirname(os.path.abspath(__file__))
-if scripts_dir not in sys.path:
-    sys.path.insert(0, scripts_dir)
-
-from utils import (
+from .utils import (
     get_heading_level, extract_heading_text, kebab_case,
     clean_source_content, ensure_directory
 )
-from frontmatter import generate_front_matter, get_source_url, get_root_source_url
-from crossref import CrossReferenceConverter, build_path_mapping
-import os
-import shutil
-import re
+from .frontmatter import generate_front_matter, get_source_url, get_root_source_url
+from .crossref import CrossReferenceConverter
 
 
 class ContentProcessor:

@@ -4,16 +4,9 @@ Converts markdown anchor links to absolute Hugo paths.
 """
 
 import re
-import os
-import sys
-from typing import List, Dict, Optional
+from typing import List, Dict
 
-# Ensure we can import from the scripts directory
-scripts_dir = os.path.dirname(os.path.abspath(__file__))
-if scripts_dir not in sys.path:
-    sys.path.insert(0, scripts_dir)
-
-from utils import kebab_case, clean_heading_text
+from .utils import kebab_case
 
 
 class CrossReferenceConverter:
@@ -112,20 +105,6 @@ class CrossReferenceConverter:
         
         return result
     
-    def convert_file_content(self, content: str, line_number: int) -> str:
-        """
-        Convert cross-references in file content.
-        
-        Args:
-            content: The markdown content
-            line_number: Starting line number for source tracking
-        
-        Returns:
-            Content with converted cross-references
-        """
-        return self.convert_content(content)
-
-
 def build_path_mapping(headings_data: List[Dict]) -> Dict[str, str]:
     """
     Build a mapping from heading text to Hugo paths.
@@ -156,39 +135,3 @@ def build_path_mapping(headings_data: List[Dict]) -> Dict[str, str]:
         mapping[kebab_text.lower()] = path
     
     return mapping
-
-
-def create_converter_from_structure(structure: List[Dict]) -> CrossReferenceConverter:
-    """
-    Create a CrossReferenceConverter from a heading structure.
-    
-    Args:
-        structure: Nested structure of headings with text and path
-    
-    Returns:
-        Configured CrossReferenceConverter
-    """
-    # Flatten the structure to get all headings
-    all_headings = []
-    
-    def extract_headings(node: Dict, parent_path: str = '') -> None:
-        text = node.get('text', '')
-        current_path = node.get('path', '')
-        full_path = current_path if current_path.startswith('/') else f"{parent_path}{current_path}"
-        
-        if text:
-            all_headings.append({
-                'text': text,
-                'path': full_path,
-                'level': node.get('level', 1)
-            })
-        
-        # Process children
-        for child in node.get('children', []):
-            extract_headings(child, full_path)
-    
-    for node in structure:
-        extract_headings(node)
-    
-    mapping = build_path_mapping(all_headings)
-    return CrossReferenceConverter(mapping)
