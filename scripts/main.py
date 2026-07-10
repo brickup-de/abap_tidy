@@ -256,8 +256,7 @@ def main():
     deep_dives_front_matter = generate_front_matter(
         title="Deep Dives",
         weight=190,
-        source=get_deep_dives_source_url(),
-        date="2026-07-05"
+        source=get_deep_dives_source_url()
     )
     
     deep_dives_content = deep_dives_front_matter + "\nDeep dive articles on specific topics from the Clean ABAP styleguide.\n"

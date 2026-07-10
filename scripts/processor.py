@@ -268,8 +268,7 @@ class ContentProcessor:
         front_matter = generate_front_matter(
             title=title,
             weight=1,
-            source=source_url,
-            date="2026-07-05"
+            source=source_url
         )
         
         # Create the content
@@ -362,8 +361,7 @@ class ContentProcessor:
                     source=get_source_url(
                         self.source_file,
                         is_subsection=True
-                    ) + '/',
-                    date="2026-07-05"
+                    ) + '/'
                 )
                 output_path = os.path.join(self.base_path, 'deep-dives', '_index.md')
                 ensure_directory(os.path.join(self.base_path, 'deep-dives'))
@@ -383,8 +381,7 @@ class ContentProcessor:
         front_matter = generate_front_matter(
             title=heading['text'],
             weight=weight,
-            source=source_url,
-            date="2026-07-05"
+            source=source_url
         )
         
         # Convert cross-references in content
