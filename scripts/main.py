@@ -265,7 +265,7 @@ def validate_cross_references(output_dir: str) -> List[Tuple[str, str]]:
 
 def print_summary(output_dir: str) -> None:
     """
-    Print a summary of the generated content, including the folder structure.
+    Print a summary of the generated content.
     """
     total_files = 0
     for root, dirs, files in os.walk(output_dir):
@@ -275,15 +275,6 @@ def print_summary(output_dir: str) -> None:
 
     print(f"\nConversion complete!")
     print(f"Generated {total_files} content files in {output_dir}")
-
-    print(f"\nFolder structure:")
-    for root, dirs, files in os.walk(output_dir):
-        level = root.replace(output_dir, '').count(os.sep)
-        indent = ' ' * 2 * level
-        print(f"{indent}{os.path.basename(root)}/")
-        subindent = ' ' * 2 * (level + 1)
-        for file in files:
-            print(f"{subindent}{file}")
 
 
 def main():
