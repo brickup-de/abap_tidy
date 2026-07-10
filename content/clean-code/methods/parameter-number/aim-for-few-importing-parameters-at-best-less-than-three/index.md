@@ -1,0 +1,45 @@
+---
+title: "Aim for few IMPORTING parameters, at best less than three"
+weight: 10
+date: 2026-07-05
+params:
+  license: "CC BY 3.0"
+  license_url: "https://creativecommons.org/licenses/by/3.0/"
+  source: "https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#aim-for-few-importing-parameters-at-best-less-than-three"
+---
+
+```ABAP
+FUNCTION seo_class_copy
+  IMPORTING
+    clskey      TYPE seoclskey
+    new_clskey  TYPE seoclskey
+    config      TYPE class_copy_config
+  EXPORTING
+    ...
+```
+
+would be much clearer than
+
+```ABAP
+" anti-pattern
+FUNCTION seo_class_copy
+  IMPORTING
+    clskey                 TYPE seoclskey
+    new_clskey             TYPE seoclskey
+    access_permission      TYPE seox_boolean DEFAULT seox_true
+    VALUE(save)            TYPE seox_boolean DEFAULT seox_true
+    VALUE(suppress_corr)   TYPE seox_boolean DEFAULT seox_false
+    VALUE(suppress_dialog) TYPE seox_boolean DEFAULT seox_false
+    VALUE(authority_check) TYPE seox_boolean DEFAULT seox_true
+    lifecycle_manager      TYPE REF TO if_adt_lifecycle_manager OPTIONAL
+    lock_handle            TYPE REF TO if_adt_lock_handle OPTIONAL
+    VALUE(suppress_commit) TYPE seox_boolean DEFAULT seox_false
+  EXPORTING
+    ...
+```
+
+Too many input parameters let the complexity of a method explode
+because it needs to handle an exponential number of combinations.
+Many parameters are an indicator that the method may do more than one thing.
+
+You can reduce the number of parameters by combining them into meaningful sets with structures and objects.

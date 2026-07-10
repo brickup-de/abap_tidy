@@ -1,0 +1,25 @@
+---
+title: "Prefer solution domain and problem domain terms"
+weight: 20
+date: 2026-07-05
+params:
+  license: "CC BY 3.0"
+  license_url: "https://creativecommons.org/licenses/by/3.0/"
+  source: "https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#prefer-solution-domain-and-problem-domain-terms"
+---
+
+Search for good names in the solution domain, i.e. computer science terms such as "queue" or "tree",
+and in the problem domain, i.e. business field terms such as "account" or "ledger".
+
+Layers that are business-like will sound best when named according to the problem domain.
+This is especially true for components that are designed with Domain-Driven Design, such as APIs and business objects.
+
+Layers that provide mostly technical functionality, such as factory classes and abstract algorithms,
+will sound best when named according to the solution domain.
+
+In any case, do not attempt to make up your own language.
+We need to be able to exchange information between developers, product owners, partners and customers,
+so choose names that all of these can relate to without a customized dictionary.
+
+> Read more in _Chapter 2: Meaningful Names: Use Solution Domain Names_ and _[...]:
+> Use Problem Domain Names_ of [Robert C. Martin's _Clean Code_](https://www.oreilly.com/library/view/clean-code/9780136083238/).

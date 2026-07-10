@@ -1,0 +1,28 @@
+---
+title: "Use LOCAL FRIENDS to access the dependency-inverting constructor"
+weight: 10
+date: 2026-07-05
+params:
+  license: "CC BY 3.0"
+  license_url: "https://creativecommons.org/licenses/by/3.0/"
+  source: "https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#use-local-friends-to-access-the-dependency-inverting-constructor"
+---
+
+```ABAP
+CLASS /clean/unit_tests DEFINITION.
+  PRIVATE SECTION.
+    DATA cut TYPE REF TO /clean/interface_under_test.
+    METHODS setup.
+ENDCLASS.
+
+CLASS /clean/class_under_test DEFINITION LOCAL FRIENDS unit_tests.
+
+CLASS unit_tests IMPLEMENTATION.
+  METHOD setup.
+    DATA(mock) = cl_abap_testdouble=>create( '/clean/some_mock' ).
+    " /clean/class_under_test is CREATE PRIVATE
+     " so this only works because of the LOCAL FRIENDS
+    cut = NEW /clean/class_under_test( mock ).
+  ENDMETHOD.
+ENDCLASS.
+```

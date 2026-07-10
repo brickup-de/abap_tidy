@@ -1,0 +1,18 @@
+---
+title: "Function Groups vs. Classes"
+weight: 40
+date: 2026-07-05
+params:
+  license: "CC BY 3.0"
+  license_url: "https://creativecommons.org/licenses/by/3.0/"
+  source: "https://github.com/SAP/styleguides/blob/main/clean-abap/sub-sections/FunctionGroupsVsClasses.md#function-groups-vs-classes"
+---
+
+New clean coders routinely ask for clarifying
+the advantage of classes over function groups.
+
+Think of a function group as a `global abstract final class`,
+with functions, form routines, and global variables
+as `static public` members.
+ 
+This yields the following comparison:

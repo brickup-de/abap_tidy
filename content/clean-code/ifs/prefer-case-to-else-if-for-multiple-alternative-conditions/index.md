@@ -1,0 +1,37 @@
+---
+title: "Prefer CASE to ELSE IF for multiple alternative conditions"
+weight: 20
+date: 2026-07-05
+params:
+  license: "CC BY 3.0"
+  license_url: "https://creativecommons.org/licenses/by/3.0/"
+  source: "https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#prefer-case-to-else-if-for-multiple-alternative-conditions"
+---
+
+```ABAP
+CASE type.
+  WHEN type-some_type.
+    " ...
+  WHEN type-some_other_type.
+    " ...
+  WHEN OTHERS.
+    RAISE EXCEPTION NEW /clean/unknown_type_failure( ).
+ENDCASE.
+```
+
+`CASE` makes it easy to see a set of alternatives that exclude each other.
+It can be faster than a series of `IF`s because it can translate to a different microprocessor command
+instead of a series of subsequently evaluated conditions.
+You can introduce new cases quickly, without having to repeat the discerning variable over and over again.
+The statement even prevents some errors that can occur when accidentally nesting the `IF`-`ELSEIF`s.
+
+```ABAP
+" anti-pattern
+IF type = type-some_type.
+  " ...
+ELSEIF type = type-some_other_type.
+  " ...
+ELSE.
+  RAISE EXCEPTION NEW /dirty/unknown_type_failure( ).
+ENDIF.
+```

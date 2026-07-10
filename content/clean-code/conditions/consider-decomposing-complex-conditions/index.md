@@ -1,0 +1,36 @@
+---
+title: "Consider decomposing complex conditions"
+weight: 40
+date: 2026-07-05
+params:
+  license: "CC BY 3.0"
+  license_url: "https://creativecommons.org/licenses/by/3.0/"
+  source: "https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#consider-decomposing-complex-conditions"
+---
+
+Conditions can become easier when decomposing them into the elementary parts that make them up:
+
+```ABAP
+DATA(example_provided) = xsdbool( example_a IS NOT INITIAL OR
+                                  example_b IS NOT INITIAL ).
+
+DATA(one_example_fits) = xsdbool( applies( example_a ) = abap_true OR
+                                  applies( example_b ) = abap_true OR
+                                  fits( example_b ) = abap_true ).
+
+IF example_provided = abap_true AND
+   one_example_fits = abap_true.
+```
+
+instead of leaving everything in-place:
+
+```ABAP
+" anti-pattern
+IF ( example_a IS NOT INITIAL OR
+     example_b IS NOT INITIAL ) AND
+   ( applies( example_a ) = abap_true OR
+     applies( example_b ) = abap_true OR
+     fits( example_b ) = abap_true ).
+```
+
+> Use the ABAP Development Tools quick fixes to quickly extract conditions and create variables as shown above.
