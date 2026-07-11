@@ -1,5 +1,6 @@
 ---
 title: "Don't make copies or write test reports"
+linkTitle: "No copies or test reports"
 weight: 40
 params:
   source: "https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#dont-make-copies-or-write-test-reports"

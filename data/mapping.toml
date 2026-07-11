@@ -190,13 +190,13 @@
 "ifs" = "Ifs"
 "ifs/keep-the-nesting-depth-low" = "Keep the nesting depth low"
 "ifs/no-empty-if-branches" = "No empty IF branches"
-"ifs/prefer-case-to-else-if-for-multiple-alternative-conditions" = "Prefer CASE"
+"ifs/prefer-case-to-else-if-for-multiple-alternative-conditions" = "Prefer CASE to multiple ELSEIF"
 
 "language" = "Language"
-"language/avoid-obsolete-language-elements" = "Avoid obsolete language elements"
+"language/avoid-obsolete-language-elements" = "Avoid obsolete elements"
 "language/mind-the-legacy" = "Mind the legacy"
 "language/mind-the-performance" = "Mind the performance"
-"language/prefer-functional-to-procedural-language-constructs" = "Prefer functional"
+"language/prefer-functional-to-procedural-language-constructs" = "Prefer functional language"
 "language/prefer-object-orientation-to-procedural-programming" = "Prefer object orientation"
 "language/use-design-patterns-wisely" = "Use design patterns wisely"
 
@@ -208,7 +208,7 @@
 "methods/calls/omit-the-optional-keyword-exporting" = "Omit optional keyword EXPORTING"
 "methods/calls/omit-the-parameter-name-in-single-parameter-calls" = "Omit parameter name in single parameter calls"
 "methods/calls/omit-the-self-reference-me-when-calling-an-instance-attribute-or-method" = "Omit the self-reference me"
-"methods/calls/prefer-functional-to-procedural-calls" = "Prefer functional"
+"methods/calls/prefer-functional-to-procedural-calls" = "Prefer functional calls"
 
 "methods/control-flow" = "Control flow"
 "methods/control-flow/avoid-check-in-other-positions" = "Avoid CHECK in other positions"
@@ -254,7 +254,7 @@
 "names/pick-one-word-per-concept" = "Pick one word per concept"
 "names/prefer-solution-domain-and-problem-domain-terms" = "Prefer domain terms"
 "names/use-descriptive-names" = "Use descriptive names"
-"names/use-nouns-for-classes-and-verbs-for-methods" = "Use noun classes and verb methods"
+"names/use-nouns-for-classes-and-verbs-for-methods" = "Noun classes, verb methods"
 "names/use-pattern-names-only-if-you-mean-them" = "Use pattern names correctly"
 "names/use-plural" = "Use plural"
 "names/use-pronounceable-names" = "Use pronounceable names"
@@ -307,7 +307,7 @@
 "testing/injection/use-test-seams-as-temporary-workaround" = "Use test seams as temporary workaround"
 
 "testing/principles" = "Principles"
-"testing/principles/dont-make-copies-or-write-test-reports" = "Don't make copies or write test reports"
+"testing/principles/dont-make-copies-or-write-test-reports" = "No copies or test reports"
 "testing/principles/dont-obsess-about-coverage" = "Don't obsess about coverage"
 "testing/principles/enable-others-to-mock-you" = "Enable others to mock you"
 "testing/principles/readability-rules" = "Readability rules"

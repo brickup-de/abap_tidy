@@ -1,6 +1,6 @@
 ---
 title: "Prefer functional to procedural calls"
-linkTitle: "Prefer functional"
+linkTitle: "Prefer functional calls"
 weight: 30
 params:
   source: "https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#prefer-functional-to-procedural-calls"

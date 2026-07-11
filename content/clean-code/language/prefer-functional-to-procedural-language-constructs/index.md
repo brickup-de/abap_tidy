@@ -1,6 +1,6 @@
 ---
 title: "Prefer functional to procedural language constructs"
-linkTitle: "Prefer functional"
+linkTitle: "Prefer functional language"
 weight: 40
 params:
   source: "https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#prefer-functional-to-procedural-language-constructs"
