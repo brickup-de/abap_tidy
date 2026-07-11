@@ -35,7 +35,7 @@ INTERFACE /dirty/common_constants.
 ENDINTERFACE.
 ```
 
-> [Enumerations](/clean-code/sub-sections-enumerations-md/)
+> [Enumerations](/clean-code/deep-dives/enumerations/)
 > describes alternative enumeration patterns (also applicable to older releases that do not support `ENUM` yet)
 > and discusses their advantages and disadvantages.
 >

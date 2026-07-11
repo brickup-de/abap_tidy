@@ -8,7 +8,7 @@ params:
   source: "https://github.com/SAP/styleguides/blob/main/clean-abap/sub-sections/Enumerations.md#try-to-enforce-type-safety"
 ---
 
-> [Enumerations](/clean-code/deep-dives/enumerations/enumerations/) > [Guidelines](/clean-code/deep-dives/enumerations/guidelines/) > [This section](/clean-code/deep-dives/enumerations/guidelines/try-to-enforce-type-safety/)
+> [Enumerations](/clean-code/deep-dives/enumerations/) > [Guidelines](/clean-code/deep-dives/enumerations/guidelines/) > [This section](/clean-code/deep-dives/enumerations/guidelines/try-to-enforce-type-safety/)
 
 The real advantage of enumerations in programming languages
 is not that they provide constants,

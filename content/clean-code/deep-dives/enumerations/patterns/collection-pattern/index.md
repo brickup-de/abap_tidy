@@ -8,7 +8,7 @@ params:
   source: "https://github.com/SAP/styleguides/blob/main/clean-abap/sub-sections/Enumerations.md#collection-pattern"
 ---
 
-> [Enumerations](/clean-code/deep-dives/enumerations/enumerations/) > [Patterns](/clean-code/deep-dives/enumerations/patterns/) > [This section](/clean-code/deep-dives/enumerations/patterns/collection-pattern/)
+> [Enumerations](/clean-code/deep-dives/enumerations/) > [Patterns](/clean-code/deep-dives/enumerations/patterns/) > [This section](/clean-code/deep-dives/enumerations/patterns/collection-pattern/)
 
 ```ABAP
 " inferior pattern

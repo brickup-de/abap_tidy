@@ -21,5 +21,5 @@ FUNCTION check_business_partner [...].
 ENDFUNCTION.
 ```
 
-> [Function Groups vs. Classes](/clean-code/sub-sections-function-groups-vs-classes-md/)
+> [Function Groups vs. Classes](/clean-code/deep-dives/function-groups-vs-classes/)
 > describes the differences in detail.

@@ -8,7 +8,7 @@ params:
   source: "https://github.com/SAP/styleguides/blob/main/clean-abap/sub-sections/Enumerations.md#native-enumerations"
 ---
 
-> [Enumerations](/clean-code/deep-dives/enumerations/enumerations/) > [This section](/clean-code/deep-dives/enumerations/native-enumerations/)
+> [Enumerations](/clean-code/deep-dives/enumerations/) > [This section](/clean-code/deep-dives/enumerations/native-enumerations/)
 
 Starting with release 7.51 ABAP offers a native definition of enumerated types with `TYPES BEGIN OF ENUM`.
 

@@ -8,7 +8,7 @@ params:
   source: "https://github.com/SAP/styleguides/blob/main/clean-abap/sub-sections/Enumerations.md#use-one-development-object-per-enumeration"
 ---
 
-> [Enumerations](/clean-code/deep-dives/enumerations/enumerations/) > [Guidelines](/clean-code/deep-dives/enumerations/guidelines/) > [This section](/clean-code/deep-dives/enumerations/guidelines/use-one-development-object-per-enumeration/)
+> [Enumerations](/clean-code/deep-dives/enumerations/) > [Guidelines](/clean-code/deep-dives/enumerations/guidelines/) > [This section](/clean-code/deep-dives/enumerations/guidelines/use-one-development-object-per-enumeration/)
 
 ```ABAP
 CLASS /clean/message_severity DEFINITION PUBLIC ABSTRACT FINAL.

@@ -142,7 +142,11 @@ def process_sub_sections(
         # Extract heading data for cross-references
         sub_heading_data = []
         for heading in all_headings:
-            path_parts = heading['path_parts']
+            # Level 1 headings are written directly into the sub-section's
+            # base_dir (see ContentProcessor._generate_heading_file), so
+            # their path_parts (which duplicate the folder name) must not
+            # be appended again here.
+            path_parts = [] if heading['level'] == 1 else heading['path_parts']
             path = '/' + '/'.join(['deep-dives', folder_name] + path_parts)
             sub_heading_data.append({
                 'text': heading['text'],

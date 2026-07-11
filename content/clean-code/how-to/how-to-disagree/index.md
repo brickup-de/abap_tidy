@@ -20,4 +20,4 @@ You are free to discuss and disagree with anything we say here.
 One of the pillars of Clean Code is that _the team rules_.
 Just be sure to give things a fair chance before you discard them.
 
-[CONTRIBUTING.md](/clean-code/contributing-md/) suggests ways how you can change this guide or deviate from it in minor details.
+[CONTRIBUTING.md](https://github.com/SAP/styleguides/blob/main/CONTRIBUTING.md) suggests ways how you can change this guide or deviate from it in minor details.

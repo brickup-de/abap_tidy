@@ -29,4 +29,4 @@ ELSE.
 ENDIF.
 ```
 
-> Alternatively you may use the [function `xsdbool( )`](/clean-code/clean-abap-md-use-xsdbool-to-set-boolean-variables/)
+> Alternatively you may use the [function `xsdbool( )`](/clean-code/booleans/use-xsdbool-to-set-boolean-variables/)

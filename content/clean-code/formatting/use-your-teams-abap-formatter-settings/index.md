@@ -17,7 +17,7 @@ Specify them under
 Set _Indent_ and _Convert Uppercase/Lowercase_ > _Uppercase Keyword_
 as agreed in your team.
 
-> [Upper vs. Lower Case](/clean-code/sub-sections-upper-vs-lower-case-md/) explains
+> [Upper vs. Lower Case](/clean-code/deep-dives/upper-vs-lower-case/) explains
 > why we do not give clear guidance for the type case of keywords.
 >
 > Read more in _Chapter 5: Formatting: Team Rules_ of [Robert C. Martin's _Clean Code_](https://www.oreilly.com/library/view/clean-code/9780136083238/).

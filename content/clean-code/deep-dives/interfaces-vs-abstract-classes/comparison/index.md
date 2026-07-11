@@ -19,7 +19,7 @@ implemented separately for each class implementing the interface.
 
 - A class can implement multiple interfaces,
 but can inherit only one interface-like abstract class. Remember to 
-[favor composition over inheritance](/clean-code/clean-abap-md-prefer-composition-to-inheritance/), though.
+[favor composition over inheritance](/clean-code/classes/classes-object-orientation/prefer-composition-to-inheritance/), though.
 
 - Inheriting from the interface-like abstract class
 disables inheriting from other classes,

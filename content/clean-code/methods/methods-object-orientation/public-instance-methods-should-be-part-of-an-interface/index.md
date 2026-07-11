@@ -19,5 +19,5 @@ In clean object orientation, having a method public without an interface does no
 with few exceptions such as enumeration classes
 which will never have an alternative implementation and will never be mocked in test cases.
 
-> [Interfaces vs. abstract classes](/clean-code/sub-sections-interfaces-vs-abstract-classes-md/)
+> [Interfaces vs. abstract classes](/clean-code/deep-dives/interfaces-vs-abstract-classes/)
 describes why this also applies to classes that overwrite inherited methods.

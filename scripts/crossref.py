@@ -14,7 +14,14 @@ class CrossReferenceConverter:
     Converts markdown anchor links to Hugo absolute paths.
     Maintains a mapping of heading text to paths for reference resolution.
     """
-    
+
+    # Matches relative links to markdown source files, e.g.:
+    #   CleanABAP.md, ../CleanABAP.md#some-anchor,
+    #   sub-sections/Enumerations.md, ../CONTRIBUTING.md
+    FILE_LINK_PATTERN = re.compile(
+        r'^(\.\./)?(?:(sub-sections)/)?([\w-]+)\.md(#.*)?$'
+    )
+
     def __init__(self, path_mapping: Dict[str, str]):
         """
         Initialize with a mapping of heading text to paths.
@@ -41,9 +48,37 @@ class CrossReferenceConverter:
         # If it's already an absolute path, keep it
         if anchor.startswith('/') or anchor.startswith('http'):
             return match.group(0)
-        
-        # Remove the # from the anchor
-        if anchor.startswith('#'):
+
+        # Handle links that point at a source markdown file rather than a
+        # bare #anchor, e.g. "sub-sections/Enumerations.md" or
+        # "../CleanABAP.md#prefer-composition-to-inheritance".
+        file_match = self.FILE_LINK_PATTERN.match(anchor)
+        if file_match:
+            up_dir, subdir, filename, fragment = file_match.groups()
+            fragment_anchor = fragment[1:] if fragment else None
+
+            if filename == 'CleanABAP':
+                # Link into the main guide - resolve via the fragment if
+                # present, otherwise point at the guide's root page.
+                if fragment_anchor is None:
+                    return f"[{link_text}](/clean-code/)"
+                anchor = fragment_anchor
+            elif subdir == 'sub-sections':
+                # Link into a sub-section (deep-dive) file.
+                if fragment_anchor is None:
+                    folder = kebab_case(filename)
+                    return f"[{link_text}](/clean-code/deep-dives/{folder}/)"
+                anchor = fragment_anchor
+            else:
+                # Reference to a file outside the generated content (e.g.
+                # "../CONTRIBUTING.md"); link to the source on GitHub.
+                base = "https://github.com/SAP/styleguides/blob/main/"
+                rel_path = f"{filename}.md" if up_dir else f"clean-abap/{filename}.md"
+                url = f"{base}{rel_path}"
+                if fragment_anchor:
+                    url += f"#{fragment_anchor}"
+                return f"[{link_text}]({url})"
+        elif anchor.startswith('#'):
             anchor = anchor[1:]
         
         # Look up the anchor in our path mapping

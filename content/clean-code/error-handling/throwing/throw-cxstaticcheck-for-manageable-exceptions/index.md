@@ -29,4 +29,4 @@ and will take care of reacting to the error situation.
 > This is in sync with the [ABAP Programming Guidelines](https://help.sap.com/doc/abapdocu_latest_index_htm/latest/en-US/abenexception_category_guidl.htm)
 > but contradicts [Robert C. Martin's _Clean Code_](https://www.oreilly.com/library/view/clean-code/9780136083238/),
 > which recommends to prefer unchecked exceptions;
-> [Exceptions](/clean-code/sub-sections-exceptions-md/) explains why.
+> [Exceptions](/clean-code/deep-dives/exceptions/) explains why.

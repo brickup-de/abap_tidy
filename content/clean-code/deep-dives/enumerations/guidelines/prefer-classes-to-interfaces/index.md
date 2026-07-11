@@ -8,7 +8,7 @@ params:
   source: "https://github.com/SAP/styleguides/blob/main/clean-abap/sub-sections/Enumerations.md#prefer-classes-to-interfaces"
 ---
 
-> [Enumerations](/clean-code/deep-dives/enumerations/enumerations/) > [Guidelines](/clean-code/deep-dives/enumerations/guidelines/) > [This section](/clean-code/deep-dives/enumerations/guidelines/prefer-classes-to-interfaces/)
+> [Enumerations](/clean-code/deep-dives/enumerations/) > [Guidelines](/clean-code/deep-dives/enumerations/guidelines/) > [This section](/clean-code/deep-dives/enumerations/guidelines/prefer-classes-to-interfaces/)
 
 ```ABAP
 CLASS /clean/message_severity DEFINITION PUBLIC ABSTRACT FINAL.

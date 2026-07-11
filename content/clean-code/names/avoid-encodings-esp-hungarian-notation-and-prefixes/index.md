@@ -24,5 +24,5 @@ METHOD add_two_numbers.
 ENDMETHOD.
 ```
 
-> [Avoid Encodings](/clean-code/sub-sections-avoid-encodings-md/)
+> [Avoid Encodings](/clean-code/deep-dives/avoid-encodings/)
 > describes the reasoning in depth.

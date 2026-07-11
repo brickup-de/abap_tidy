@@ -26,5 +26,5 @@ for example the [Composite design pattern](https://en.wikipedia.org/wiki/Composi
 Just ask yourself critically whether inheritance in your case will really provide more benefits than disadvantages.
 If in doubt, composition generally is the safer choice.
 
-> [Interfaces vs. abstract classes](/clean-code/sub-sections-interfaces-vs-abstract-classes-md/)
+> [Interfaces vs. abstract classes](/clean-code/deep-dives/interfaces-vs-abstract-classes/)
 compares some details.

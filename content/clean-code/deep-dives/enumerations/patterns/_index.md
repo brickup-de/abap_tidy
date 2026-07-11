@@ -8,7 +8,7 @@ params:
   source: "https://github.com/SAP/styleguides/blob/main/clean-abap/sub-sections/Enumerations.md#patterns"
 ---
 
-> [Enumerations](/clean-code/deep-dives/enumerations/enumerations/) > [This section](/clean-code/deep-dives/enumerations/patterns/)
+> [Enumerations](/clean-code/deep-dives/enumerations/) > [This section](/clean-code/deep-dives/enumerations/patterns/)
 
 If native `ENUM` cannot be used we recommend either
 the **[constant pattern](/clean-code/deep-dives/enumerations/patterns/constant-pattern/)**
