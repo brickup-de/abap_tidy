@@ -9,10 +9,11 @@ Three composable stages, run in order by scripts/main.py:
   apply_text_fixups rewrites image paths and stale "below" references
 
 They're kept separate because resolve_links is the only stage that needs
-state external to the single file being parsed (a converter built from an
-aggregate, incrementally-grown path mapping across the whole multi-file
-pipeline run -- see scripts/main.py's process_sub_sections loop). parse_tree
-and apply_text_fixups depend on nothing but the file's own text.
+state external to the single file being parsed (a converter built from
+every file's heading data, parsed up front across the whole multi-file
+pipeline run -- see scripts/main.py's parse_main/parse_sub_sections/
+write_main/write_sub_section split). parse_tree and apply_text_fixups
+depend on nothing but the file's own text.
 
 One behavior is deliberately preserved from the ContentProcessor this module
 replaces: the non-subsection site root's content skips apply_text_fixups

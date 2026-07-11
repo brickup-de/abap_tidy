@@ -11,7 +11,7 @@ from typing import List, Dict, Tuple
 from .utils import kebab_case, ensure_directory
 from .frontmatter import generate_front_matter, get_deep_dives_source_url
 from .crossref import CrossReferenceConverter, build_path_mapping
-from .tree import parse_tree, resolve_links, apply_text_fixups, walk
+from .tree import Page, parse_tree, resolve_links, apply_text_fixups, walk
 from .writer import write_tree
 
 
@@ -52,19 +52,25 @@ def get_source_files(base_dir: str) -> Dict[str, str]:
     }
 
 
-def process_clean_abap(
-    main_file: str,
-    output_dir: str
-) -> List[Dict]:
-    """
-    Process the main CleanABAP.md file.
+def _heading_entry(page: Page, prefix_parts: List[str]) -> Dict:
+    path = '/' + '/'.join(prefix_parts + page.path_parts)
+    return {
+        'text': page.title,
+        'path': f"/clean-code{path}/",
+        'level': page.level,
+    }
 
-    Args:
-        main_file: Path to CleanABAP.md
-        output_dir: Base output directory (e.g., content/clean-code/)
+
+def parse_main(main_file: str) -> Tuple[Page, List[Dict]]:
+    """
+    Parse the main CleanABAP.md file into a Page tree and extract its
+    heading data for cross-reference mapping. Pure aside from reading the
+    source file -- no link resolution, fixups, or writing happens here, so
+    this can run before any other file's heading data exists.
 
     Returns:
-        List of heading data for cross-reference mapping
+        (tree, heading_data) -- heading_data excludes the site root itself,
+        which is never addressable via a heading anchor.
     """
     print(f"Processing {main_file}...")
 
@@ -73,91 +79,90 @@ def process_clean_abap(
 
     tree = parse_tree(markdown_text, is_subsection=False)
 
-    # Build path mapping for cross-references. The site root itself is never
-    # part of the mapping -- it isn't addressable via a heading anchor.
-    heading_data = []
-    for child in tree.children:
-        for page in walk(child):
-            path = '/' + '/'.join(page.path_parts)
-            heading_data.append({
-                'text': page.title,
-                'path': f"/clean-code{path}/",
-                'level': page.level
-            })
+    heading_data = [
+        _heading_entry(page, [])
+        for child in tree.children
+        for page in walk(child)
+    ]
 
-    # Create converter
-    converter = CrossReferenceConverter(build_path_mapping(heading_data))
-    tree = resolve_links(tree, converter)
-    tree = apply_text_fixups(tree, is_subsection=False)
-
-    # Generate Hugo files
-    file_count = write_tree(tree, output_dir, source_file=main_file, is_subsection=False)
-    print(f"Generated {file_count} files from main content")
-
-    return heading_data
+    return tree, heading_data
 
 
-def process_sub_sections(
-    sub_section_files: List[str],
-    output_dir: str,
-    main_heading_data: List[Dict]
-) -> List[Dict]:
+def parse_sub_sections(sub_section_files: List[str]) -> List[Tuple[str, str, Page, List[Dict]]]:
     """
-    Process the sub-section files.
-    
-    Args:
-        sub_section_files: List of sub-section file paths
-        output_dir: Base output directory
-        main_heading_data: Heading data from main file for cross-references
-    
+    Parse every sub-section file into a Page tree and its heading data.
+    Sorted by filename purely to keep subsection_index (and thus each
+    sub-section's own weight) deterministic -- unrelated to cross-reference
+    resolution, which now sees every file's heading data regardless of
+    parse order (see write_sub_section).
+
     Returns:
-        List of heading data from sub-sections
+        List of (file_path, folder_name, tree, heading_data) tuples, one
+        per sub-section file, in sorted-filename order. heading_data
+        includes the sub-section's own root heading (level 1), unlike the
+        main content's root -- it's written directly into the sub-section's
+        own base_dir (its path_parts is already [] -- see tree.parse_tree).
     """
-    all_sub_heading_data = []
-    
-    # Sort sub-sections by filename for consistent ordering
-    sorted_files = sorted(sub_section_files)
-    
-    for i, file_path in enumerate(sorted_files):
+    parsed = []
+
+    for i, file_path in enumerate(sorted(sub_section_files)):
         filename = os.path.basename(file_path)
         print(f"Processing sub-section: {filename}...")
-        
-        # Create folder name from filename (without .md)
+
         folder_name = kebab_case(filename[:-3])  # Remove .md extension
-        subsection_base = os.path.join(output_dir, 'deep-dives', folder_name)
-        ensure_directory(subsection_base)
-        
+
         with open(file_path, 'r', encoding='utf-8') as f:
             markdown_text = f.read()
 
         tree = parse_tree(markdown_text, is_subsection=True, subsection_index=i)
+        heading_data = [_heading_entry(page, ['deep-dives', folder_name]) for page in walk(tree)]
 
-        # Extract heading data for cross-references. The sub-section's own
-        # root heading (level 1) is written directly into the sub-section's
-        # base_dir (its path_parts is already [] -- see tree.parse_tree), so
-        # it's included here too, unlike the main content's root.
-        sub_heading_data = []
-        for page in walk(tree):
-            path = '/' + '/'.join(['deep-dives', folder_name] + page.path_parts)
-            sub_heading_data.append({
-                'text': page.title,
-                'path': f"/clean-code{path}/",
-                'level': page.level
-            })
+        parsed.append((file_path, folder_name, tree, heading_data))
 
-        all_sub_heading_data.extend(sub_heading_data)
+    return parsed
 
-        # Build path mapping including main content
-        all_heading_data = main_heading_data + all_sub_heading_data
-        converter = CrossReferenceConverter(build_path_mapping(all_heading_data))
-        tree = resolve_links(tree, converter)
-        tree = apply_text_fixups(tree, is_subsection=True)
 
-        # Generate Hugo files
-        file_count = write_tree(tree, subsection_base, source_file=file_path, is_subsection=True)
-        print(f"Generated {file_count} files from {filename}")
-    
-    return all_sub_heading_data
+def _converter_for(own_heading_data: List[Dict], all_heading_data: List[Dict]) -> CrossReferenceConverter:
+    """
+    Build a converter that resolves against every parsed file's headings,
+    but with own_heading_data appended last so a file's own headings always
+    win ties for itself -- otherwise a same-titled heading in another file
+    could silently hijack a same-file self-reference (real collisions exist
+    in the source data, e.g. "Exceptions" appears both in CleanABAP.md and
+    in a sub-section; see scripts/tests/test_main.py).
+    """
+    return CrossReferenceConverter(build_path_mapping(all_heading_data + own_heading_data))
+
+
+def write_main(tree: Page, output_dir: str, main_file: str, own_heading_data: List[Dict], all_heading_data: List[Dict]) -> None:
+    """Resolve links and fixups against the full cross-file mapping, then write the main content."""
+    converter = _converter_for(own_heading_data, all_heading_data)
+    tree = resolve_links(tree, converter)
+    tree = apply_text_fixups(tree, is_subsection=False)
+
+    file_count = write_tree(tree, output_dir, source_file=main_file, is_subsection=False)
+    print(f"Generated {file_count} files from main content")
+
+
+def write_sub_section(
+    file_path: str,
+    folder_name: str,
+    tree: Page,
+    output_dir: str,
+    own_heading_data: List[Dict],
+    all_heading_data: List[Dict],
+) -> None:
+    """Resolve links and fixups against the full cross-file mapping, then write one sub-section."""
+    filename = os.path.basename(file_path)
+    subsection_base = os.path.join(output_dir, 'deep-dives', folder_name)
+    ensure_directory(subsection_base)
+
+    converter = _converter_for(own_heading_data, all_heading_data)
+    tree = resolve_links(tree, converter)
+    tree = apply_text_fixups(tree, is_subsection=True)
+
+    file_count = write_tree(tree, subsection_base, source_file=file_path, is_subsection=True)
+    print(f"Generated {file_count} files from {filename}")
 
 
 def setup_output_dir(output_dir: str) -> None:
@@ -184,22 +189,20 @@ def run_conversion(repo_root: str, output_dir: str) -> None:
     print(f"Output: {output_dir}")
     print()
 
-    # Process main CleanABAP.md file first
-    main_heading_data = process_clean_abap(
-        source_files['main'],
-        output_dir
-    )
+    # Parse every source file first, so cross-reference resolution has a
+    # complete picture of every heading no matter which file references
+    # which. Resolving before every file is parsed is what let links fall
+    # through to CrossReferenceConverter's guessed-path fallback.
+    main_tree, main_heading_data = parse_main(source_files['main'])
+    sub_sections = parse_sub_sections(source_files['sub_sections'])
 
-    # Process sub-sections
-    if source_files['sub_sections']:
-        sub_heading_data = process_sub_sections(
-            source_files['sub_sections'],
-            output_dir,
-            main_heading_data
-        )
+    all_heading_data = list(main_heading_data)
+    for _file_path, _folder_name, _tree, heading_data in sub_sections:
+        all_heading_data.extend(heading_data)
 
-        # Update main heading data with sub-section data
-        main_heading_data.extend(sub_heading_data)
+    write_main(main_tree, output_dir, source_files['main'], main_heading_data, all_heading_data)
+    for file_path, folder_name, tree, heading_data in sub_sections:
+        write_sub_section(file_path, folder_name, tree, output_dir, heading_data, all_heading_data)
 
     # Create the deep-dives/_index.md file
     deep_dives_path = os.path.join(output_dir, 'deep-dives')
@@ -215,9 +218,6 @@ def run_conversion(repo_root: str, output_dir: str) -> None:
 
     with open(os.path.join(deep_dives_path, '_index.md'), 'w', encoding='utf-8') as f:
         f.write(deep_dives_content)
-
-    # Note: Images are copied during content processing in the processor
-    # Cross-references are also fixed during content processing
 
 
 def find_internal_links(content: str) -> List[str]:
