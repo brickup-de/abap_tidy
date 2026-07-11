@@ -2,7 +2,7 @@
 title: "Prefer LINE_EXISTS to READ TABLE or LOOP AT"
 weight: 40
 params:
-  source: "https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#prefer-lineexists-to-read-table-or-loop-at"
+  source: "https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#prefer-line_exists-to-read-table-or-loop-at"
 ---
 
 ```ABAP

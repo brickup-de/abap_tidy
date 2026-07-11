@@ -2,7 +2,7 @@
 title: "Use ` to define literals"
 weight: 10
 params:
-  source: "https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#use-to-define-literals"
+  source: "https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#use--to-define-literals"
 ---
 
 ```ABAP

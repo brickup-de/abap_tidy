@@ -6,7 +6,7 @@ Converts markdown anchor links to absolute Hugo paths.
 import re
 from typing import List, Dict
 
-from .utils import kebab_case
+from .utils import kebab_case, github_anchor
 
 
 class CrossReferenceConverter:
@@ -87,16 +87,16 @@ class CrossReferenceConverter:
             hugo_path = self.path_mapping[anchor]
             return f"[{link_text}]({hugo_path})"
         
-        # Try kebab-case version
-        kebab_anchor = kebab_case(anchor)
+        # Try GitHub-anchor version
+        kebab_anchor = github_anchor(anchor)
         if kebab_anchor in self.path_mapping:
             hugo_path = self.path_mapping[kebab_anchor]
             return f"[{link_text}]({hugo_path})"
-        
+
         # Try to find the closest match
         # This handles cases where the anchor might be slightly different
         for heading, path in self.path_mapping.items():
-            if kebab_case(heading) == kebab_anchor:
+            if github_anchor(heading) == kebab_anchor:
                 return f"[{link_text}]({path})"
         
         # If we can't find a match, try to construct a reasonable path
@@ -158,9 +158,9 @@ def build_path_mapping(headings_data: List[Dict]) -> Dict[str, str]:
         
         # Add exact text mapping
         mapping[text.lower()] = path
-        
-        # Add kebab-case mapping
-        kebab_text = kebab_case(text)
+
+        # Add GitHub-anchor mapping
+        kebab_text = github_anchor(text)
         mapping[kebab_text] = path
         
         # Add text with # prefix (for anchor links)

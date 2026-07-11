@@ -2,7 +2,7 @@
 title: "ABAP Doc only for public APIs"
 weight: 130
 params:
-  source: "https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#abap-doc-only-for-public-ap-is"
+  source: "https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#abap-doc-only-for-public-apis"
 ---
 
 Write ABAP Doc to document public APIs,

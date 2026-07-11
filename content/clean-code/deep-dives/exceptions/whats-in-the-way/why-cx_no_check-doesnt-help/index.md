@@ -2,7 +2,7 @@
 title: "Why CX_NO_CHECK Doesn't Help"
 weight: 10
 params:
-  source: "https://github.com/SAP/styleguides/blob/main/clean-abap/sub-sections/Exceptions.md#why-cxnocheck-doesnt-help"
+  source: "https://github.com/SAP/styleguides/blob/main/clean-abap/sub-sections/Exceptions.md#why-cx_no_check-doesnt-help"
 ---
 
 `cx_no_check` also doesn't help.

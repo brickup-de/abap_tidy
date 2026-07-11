@@ -9,20 +9,10 @@ from typing import List, Optional
 
 def kebab_case(text: str) -> str:
     """
-    Convert text to kebab-case.
-    
-    Rules:
-    - Lowercase all characters
-    - Replace spaces with hyphens
-    - Insert hyphens before capital letters (for camelCase)
-    - Remove all punctuation (commas, periods, apostrophes, parentheses, etc.)
-    - Preserve existing hyphens
-    
-    Examples:
-        "How to" -> "how-to"
-        "Get Started with Clean Code" -> "get-started-with-clean-code"
-        "Avoid encodings, esp. Hungarian notation" -> "avoid-encodings-esp-hungarian-notation"
-        "InterfacesVsAbstractClasses" -> "interfaces-vs-abstract-classes"
+    Convert text to kebab-case, splitting camelCase/PascalCase words.
+
+    Needed for PascalCase sub-section filenames (e.g. "InterfacesVsAbstractClasses"
+    -> "interfaces-vs-abstract-classes"), which have no GitHub anchor to match.
     """
     # Insert hyphens before capital letters (for camelCase)
     text = re.sub(r'([a-z])([A-Z])', r'\1-\2', text)
@@ -43,6 +33,20 @@ def kebab_case(text: str) -> str:
     # Remove leading/trailing hyphens
     text = text.strip('-')
     return text
+
+
+def github_anchor(text: str) -> str:
+    """
+    Convert heading text to a GitHub Markdown anchor slug (matches the
+    github-slugger algorithm: lowercase, strip punctuation, spaces -> hyphens,
+    no collapsing/trimming of hyphens, underscores/acronyms untouched).
+
+    Needed to match the anchors GitHub itself generates for headings, which
+    internal links inside the source markdown already rely on.
+    """
+    text = text.strip().lower()
+    text = re.sub(r'[^\w\- ]', '', text)
+    return text.replace(' ', '-')
 
 
 def clean_heading_text(text: str) -> str:

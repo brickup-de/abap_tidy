@@ -4,7 +4,7 @@ Front matter generation for Hugo content pages.
 
 from typing import Optional
 
-from .utils import kebab_case
+from .utils import github_anchor
 
 
 def escape_yaml_string(value: str) -> str:
@@ -89,7 +89,7 @@ def get_source_url(
     # Use heading anchor instead of line number if heading text is provided
     if heading_text:
         # Generate GitHub anchor format (lowercase, spaces to hyphens, no special chars)
-        anchor = kebab_case(heading_text)
+        anchor = github_anchor(heading_text)
         url += f"#{anchor}"
     elif line_number:
         # Fallback to line number format for backward compatibility

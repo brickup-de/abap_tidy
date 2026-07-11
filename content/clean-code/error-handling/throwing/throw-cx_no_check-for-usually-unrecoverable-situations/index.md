@@ -2,7 +2,7 @@
 title: "Throw CX_NO_CHECK for usually unrecoverable situations"
 weight: 10
 params:
-  source: "https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#throw-cxnocheck-for-usually-unrecoverable-situations"
+  source: "https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#throw-cx_no_check-for-usually-unrecoverable-situations"
 ---
 
 If an exception is so severe that the receiver is unlikely to recover from it, use `CX_NO_CHECK`:

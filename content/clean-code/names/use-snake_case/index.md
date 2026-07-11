@@ -2,7 +2,7 @@
 title: "Use snake_case"
 weight: 50
 params:
-  source: "https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#use-snakecase"
+  source: "https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#use-snake_case"
 ---
 
 ABAP is case insensitive which is why we recommend following the convention to use `snake_case` consistently.

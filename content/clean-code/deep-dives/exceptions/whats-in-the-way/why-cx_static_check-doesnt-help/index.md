@@ -2,7 +2,7 @@
 title: "Why CX_STATIC_CHECK Doesn't Help"
 weight: 10
 params:
-  source: "https://github.com/SAP/styleguides/blob/main/clean-abap/sub-sections/Exceptions.md#why-cxstaticcheck-doesnt-help"
+  source: "https://github.com/SAP/styleguides/blob/main/clean-abap/sub-sections/Exceptions.md#why-cx_static_check-doesnt-help"
 ---
 
 `cx_static_check` would force `middle_method`

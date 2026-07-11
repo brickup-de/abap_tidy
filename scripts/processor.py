@@ -9,7 +9,7 @@ import re
 from typing import List, Dict, Tuple
 
 from .utils import (
-    get_heading_level, extract_heading_text, kebab_case,
+    get_heading_level, extract_heading_text, github_anchor,
     clean_source_content, ensure_directory
 )
 from .frontmatter import generate_front_matter, get_source_url, get_root_source_url
@@ -110,8 +110,9 @@ class ContentProcessor:
                     while self.heading_stack and self.heading_stack[-1]['level'] >= heading_level:
                         self.heading_stack.pop()
                     
-                    # Create folder name
-                    folder_name = kebab_case(heading_text)
+                    # Create folder name (must match the GitHub anchor so
+                    # our own URLs stay consistent with source cross-links)
+                    folder_name = github_anchor(heading_text)
                     
                     # Build path
                     if self.heading_stack:

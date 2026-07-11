@@ -2,7 +2,7 @@
 title: "Why CX_DYNAMIC_CHECK Doesn't Help"
 weight: 10
 params:
-  source: "https://github.com/SAP/styleguides/blob/main/clean-abap/sub-sections/Exceptions.md#why-cxdynamiccheck-doesnt-help"
+  source: "https://github.com/SAP/styleguides/blob/main/clean-abap/sub-sections/Exceptions.md#why-cx_dynamic_check-doesnt-help"
 ---
 
 `cx_dynamic_check` doesn't improve this.

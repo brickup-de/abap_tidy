@@ -2,7 +2,7 @@
 title: "Comment with \", not with *"
 weight: 60
 params:
-  source: "https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#comment-with-not-with"
+  source: "https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#comment-with--not-with-"
 ---
 
 Quote comments indent along with the statements they comment

@@ -2,7 +2,7 @@
 title: "Throw CX_STATIC_CHECK for manageable exceptions"
 weight: 10
 params:
-  source: "https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#throw-cxstaticcheck-for-manageable-exceptions"
+  source: "https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#throw-cx_static_check-for-manageable-exceptions"
 ---
 
 If an exception can be expected to occur and be reasonably handled by the receiver,

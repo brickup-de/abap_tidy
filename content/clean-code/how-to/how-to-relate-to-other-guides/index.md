@@ -7,7 +7,7 @@ params:
 
 Our guide follows the _spirit_ of Clean Code,
 meaning we adjusted some things to the ABAP programming language
-e.g. [Throw CX_STATIC_CHECK for manageable exceptions](/clean-code/error-handling/throwing/throw-cxstaticcheck-for-manageable-exceptions/).
+e.g. [Throw CX_STATIC_CHECK for manageable exceptions](/clean-code/error-handling/throwing/throw-cx_static_check-for-manageable-exceptions/).
 
 Some facts are from the
 [ABAP Programming Guidelines](https://help.sap.com/doc/abapdocu_latest_index_htm/latest/en-US/index.htm?file=abenabap_pgl.htm),

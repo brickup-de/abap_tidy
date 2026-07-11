@@ -2,7 +2,7 @@
 title: "Use ABAP_BOOL for Booleans"
 weight: 20
 params:
-  source: "https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#use-abapbool-for-booleans"
+  source: "https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#use-abap_bool-for-booleans"
 ---
 
 ```ABAP
