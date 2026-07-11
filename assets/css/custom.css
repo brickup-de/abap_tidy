@@ -1,6 +1,11 @@
-/* Hide errors, code may have syntax errors for brevity */
-.highlight .chroma .err,
-.dark .highlight .chroma .err {
-  color: inherit;
-  background: inherit;
+/* Shiki dual-theme output: map its CSS variables to the site's light/dark toggle.
+   Background is deliberately left alone so the existing hextra-code-block pre
+   background (a tinted primary color, not a solid one) keeps showing through. */
+.shiki,
+.shiki span {
+  color: var(--shiki-light);
+}
+.dark .shiki,
+.dark .shiki span {
+  color: var(--shiki-dark);
 }

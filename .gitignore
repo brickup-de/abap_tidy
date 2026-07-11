@@ -4,8 +4,10 @@
 /resources/
 /_vendor/
 
-# Python files
+# Build files
 __pycache__
+/node_modules
+*.log
 
 # IDE and editor files
 .idea/
@@ -20,6 +22,3 @@ __pycache__
 # OS files
 .DS_Store
 Thumbs.db
-
-# Logs
-*.log

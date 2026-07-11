@@ -1,0 +1,13 @@
+{
+  "name": "abap-cards",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "hugo --minify && node scripts/highlight-abap.mjs",
+    "dev": "hugo server",
+    "preview": "npm run build && python3 -m http.server 1414 --directory public"
+  },
+  "dependencies": {
+    "shiki": "^1.24.0"
+  }
+}
