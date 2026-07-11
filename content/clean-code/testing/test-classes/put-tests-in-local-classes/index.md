@@ -1,6 +1,6 @@
 ---
 title: "Put tests in local classes"
-weight: 10
+weight: 20
 params:
   source: "https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#put-tests-in-local-classes"
 ---

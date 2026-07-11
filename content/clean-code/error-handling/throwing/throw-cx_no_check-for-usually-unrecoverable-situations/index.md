@@ -1,6 +1,6 @@
 ---
 title: "Throw CX_NO_CHECK for usually unrecoverable situations"
-weight: 10
+weight: 50
 params:
   source: "https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#throw-cx_no_check-for-usually-unrecoverable-situations"
 ---

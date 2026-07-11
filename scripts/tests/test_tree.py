@@ -4,28 +4,29 @@ during the candidate #2 architecture-review grilling session.
 
 tree.py replaces scripts/processor.py's ContentProcessor with three pure
 "markdown text in, page tree out" stages (parse_tree, resolve_links,
-apply_text_fixups) plus a Page dataclass. Two subtleties from processor.py
-are deliberately reproduced here, not fixed:
+apply_text_fixups) plus a Page dataclass.
 
-1. KNOWN BUG -- weight is only correctly position-based for the top two
-   heading levels. ContentProcessor._calculate_weight looked up a heading's
-   siblings by scanning only a shallow, non-recursively-nested `structure`
-   list; anything past that lookup's reach silently fell back to a constant
-   weight. Traced against real content and confirmed in the actual generated
-   site (see architecture-review handoff): three '####'-level siblings under
-   classes/classes-object-orientation/ all get weight 10, and three '##'
-   -level siblings inside the Enumerations deep-dive all get weight 20
-   (identical to their own parent's weight). Fixing this would change
-   content/ output, so it's preserved exactly:
-     - main content: level 2 and level 3 headings get correct 1-based
-       sibling-position * 10 weight; level 4+ always get weight 10.
-     - sub-sections: level 1 (root) and level 2 headings all get the same
-       base_weight = (subsection_index + 1) * 10; level 3+ always get 10.
-2. The root page's content pipeline is asymmetric: ContentProcessor.
-   _generate_root_file (used only for the non-subsection site root) never
-   called _fix_image_references/_fix_below_references, only cross-reference
-   conversion -- unlike every other page, which got both. apply_text_fixups
-   reproduces this by skipping the top node when is_subsection is False.
+One subtlety from processor.py is deliberately reproduced here, not fixed:
+the root page's content pipeline is asymmetric. ContentProcessor.
+_generate_root_file (used only for the non-subsection site root) never
+called _fix_image_references/_fix_below_references, only cross-reference
+conversion -- unlike every other page, which got both. apply_text_fixups
+reproduces this by skipping the top node when is_subsection is False.
+
+One bug from processor.py is deliberately NOT reproduced: weight there was
+only correctly position-based for the top two heading levels.
+ContentProcessor._calculate_weight looked up a heading's siblings by
+scanning only a shallow, non-recursively-nested `structure` list; anything
+past that lookup's reach silently fell back to a constant weight. Traced
+against real content and confirmed in the actual rendered site: Hugo's
+sidebar tie-breaks equal weights alphabetically, so three '####'-level
+siblings under classes/classes-object-orientation/ (all weight 10 under the
+old code) rendered in alphabetical order instead of the guide's intended
+reading order, and the same for the Enumerations deep-dive's top-level
+sections (all weight 20 under the old code). Fixed here by weighting every
+non-root page by its true 1-based position among its actual parent's
+children, at every depth -- trivial since parse_tree's tree nests every
+heading level correctly to begin with (see the has_children note below).
 
 has_children is NOT bug-for-bug ported from _has_children's convoluted
 two-path lookup: tracing it showed its fallback path (a prefix-match scan
@@ -98,12 +99,13 @@ class ParseTreeMainContentTests(unittest.TestCase):
         self.assertEqual(find(self.root, "First Chapter Sub A").weight, 10)
         self.assertEqual(find(self.root, "First Chapter Sub B").weight, 20)
 
-    def test_known_bug_level_4_siblings_all_get_weight_10(self):
-        # Both are children of "First Chapter Sub A"; a correct sibling
-        # position would give 10 and 20, but the old algorithm's shallow
-        # sibling lookup never reaches this deep, so both fall back to 10.
+    def test_level_4_siblings_get_correct_sequential_weight_per_parent(self):
+        # Both are children of "First Chapter Sub A". Unlike the old
+        # ContentProcessor, whose shallow sibling lookup never reached this
+        # deep and fell back to a constant weight 10 for both, parse_tree
+        # weights every depth by true position among its actual parent.
         self.assertEqual(find(self.root, "Deeply Nested One").weight, 10)
-        self.assertEqual(find(self.root, "Deeply Nested Two").weight, 10)
+        self.assertEqual(find(self.root, "Deeply Nested Two").weight, 20)
 
     def test_path_parts_nest_correctly_at_every_depth(self):
         self.assertEqual(find(self.root, "First Chapter").path_parts, ["first-chapter"])
@@ -187,13 +189,13 @@ class ParseTreeSubSectionTests(unittest.TestCase):
         self.assertEqual(self.root.weight, 30)
         self.assertEqual(self.root.path_parts, [])
 
-    def test_known_bug_level_2_siblings_all_get_the_root_base_weight(self):
-        # Not position-based: every level-2 heading in a sub-section shares
-        # the parent's base_weight, indistinguishable from each other.
-        self.assertEqual(find(self.root, "Section One").weight, 30)
-        self.assertEqual(find(self.root, "Section Two").weight, 30)
+    def test_level_2_siblings_get_correct_sequential_weight(self):
+        # Position-based among the root's own children, not the old
+        # ContentProcessor's constant base_weight shared by every sibling.
+        self.assertEqual(find(self.root, "Section One").weight, 10)
+        self.assertEqual(find(self.root, "Section Two").weight, 20)
 
-    def test_known_bug_level_3_heading_gets_constant_weight_10(self):
+    def test_level_3_heading_gets_correct_position_based_weight(self):
         self.assertEqual(find(self.root, "Section Two Sub").weight, 10)
 
     def test_has_children(self):

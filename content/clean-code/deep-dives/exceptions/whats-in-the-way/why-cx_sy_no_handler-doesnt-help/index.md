@@ -1,6 +1,6 @@
 ---
 title: "Why CX_SY_NO_HANDLER Doesn't Help"
-weight: 10
+weight: 40
 params:
   source: "https://github.com/SAP/styleguides/blob/main/clean-abap/sub-sections/Exceptions.md#why-cx_sy_no_handler-doesnt-help"
 ---

@@ -1,6 +1,6 @@
 ---
 title: "The Ideal"
-weight: 30
+weight: 10
 params:
   source: "https://github.com/SAP/styleguides/blob/main/clean-abap/sub-sections/Exceptions.md#the-ideal"
 ---

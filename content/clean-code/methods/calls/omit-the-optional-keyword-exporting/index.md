@@ -1,6 +1,6 @@
 ---
 title: "Omit the optional keyword EXPORTING"
-weight: 10
+weight: 50
 params:
   source: "https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#omit-the-optional-keyword-exporting"
 ---

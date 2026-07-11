@@ -1,6 +1,6 @@
 ---
 title: "Enumerations"
-weight: 60
+weight: 50
 params:
   source: "https://github.com/SAP/styleguides/blob/main/clean-abap/sub-sections/ModernABAPLanguageElements.md#enumerations"
 ---

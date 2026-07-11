@@ -1,6 +1,6 @@
 ---
 title: "Functional statements and expressions in ABAP"
-weight: 60
+weight: 10
 params:
   source: "https://github.com/SAP/styleguides/blob/main/clean-abap/sub-sections/ModernABAPLanguageElements.md#functional-statements-and-expressions-in-abap"
 ---

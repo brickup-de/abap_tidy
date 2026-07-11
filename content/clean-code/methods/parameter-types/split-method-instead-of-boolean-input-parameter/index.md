@@ -1,6 +1,6 @@
 ---
 title: "Split method instead of Boolean input parameter"
-weight: 10
+weight: 50
 params:
   source: "https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#split-method-instead-of-boolean-input-parameter"
 ---

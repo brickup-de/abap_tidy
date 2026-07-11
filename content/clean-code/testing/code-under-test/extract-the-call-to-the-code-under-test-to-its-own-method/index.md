@@ -1,6 +1,6 @@
 ---
 title: "Extract the call to the code under test to its own method"
-weight: 10
+weight: 30
 params:
   source: "https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#extract-the-call-to-the-code-under-test-to-its-own-method"
 ---

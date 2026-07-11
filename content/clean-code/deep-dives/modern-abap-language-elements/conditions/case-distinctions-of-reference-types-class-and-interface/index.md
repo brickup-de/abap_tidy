@@ -1,6 +1,6 @@
 ---
 title: "Case distinctions of reference types class and interface"
-weight: 10
+weight: 30
 params:
   source: "https://github.com/SAP/styleguides/blob/main/clean-abap/sub-sections/ModernABAPLanguageElements.md#case-distinctions-of-reference-types-class-and-interface"
 ---

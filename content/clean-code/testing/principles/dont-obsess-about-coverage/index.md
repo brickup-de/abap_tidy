@@ -1,6 +1,6 @@
 ---
 title: "Don't obsess about coverage"
-weight: 10
+weight: 60
 params:
   source: "https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#dont-obsess-about-coverage"
 ---

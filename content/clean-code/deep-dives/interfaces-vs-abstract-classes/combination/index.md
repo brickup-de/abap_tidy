@@ -1,6 +1,6 @@
 ---
 title: "Combination"
-weight: 50
+weight: 40
 params:
   source: "https://github.com/SAP/styleguides/blob/main/clean-abap/sub-sections/InterfacesVsAbstractClasses.md#combination"
 ---

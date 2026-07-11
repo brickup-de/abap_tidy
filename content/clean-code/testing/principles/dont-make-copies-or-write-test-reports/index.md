@@ -1,6 +1,6 @@
 ---
 title: "Don't make copies or write test reports"
-weight: 10
+weight: 40
 params:
   source: "https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#dont-make-copies-or-write-test-reports"
 ---

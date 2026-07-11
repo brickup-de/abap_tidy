@@ -1,6 +1,6 @@
 ---
 title: "RETURNING large tables is usually okay"
-weight: 10
+weight: 20
 params:
   source: "https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#returning-large-tables-is-usually-okay"
 ---

@@ -1,6 +1,6 @@
 ---
 title: "Guidelines"
-weight: 20
+weight: 30
 params:
   source: "https://github.com/SAP/styleguides/blob/main/clean-abap/sub-sections/Enumerations.md#guidelines"
 ---

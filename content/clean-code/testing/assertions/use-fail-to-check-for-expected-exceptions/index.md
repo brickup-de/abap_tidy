@@ -1,6 +1,6 @@
 ---
 title: "Use FAIL to check for expected exceptions"
-weight: 10
+weight: 50
 params:
   source: "https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#use-fail-to-check-for-expected-exceptions"
 ---

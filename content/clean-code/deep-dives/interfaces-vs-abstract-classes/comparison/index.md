@@ -1,6 +1,6 @@
 ---
 title: "Comparison"
-weight: 50
+weight: 30
 params:
   source: "https://github.com/SAP/styleguides/blob/main/clean-abap/sub-sections/InterfacesVsAbstractClasses.md#comparison"
 ---

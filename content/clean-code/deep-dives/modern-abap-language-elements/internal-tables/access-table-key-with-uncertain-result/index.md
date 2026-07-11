@@ -1,6 +1,6 @@
 ---
 title: "Access table key with uncertain result"
-weight: 10
+weight: 30
 params:
   source: "https://github.com/SAP/styleguides/blob/main/clean-abap/sub-sections/ModernABAPLanguageElements.md#access-table-key-with-uncertain-result"
 ---

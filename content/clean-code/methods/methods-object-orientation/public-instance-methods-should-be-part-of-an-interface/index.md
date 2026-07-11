@@ -1,6 +1,6 @@
 ---
 title: "Public instance methods should be part of an interface"
-weight: 10
+weight: 20
 params:
   source: "https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#public-instance-methods-should-be-part-of-an-interface"
 ---

@@ -1,6 +1,6 @@
 ---
 title: "Use LOCAL FRIENDS to access the dependency-inverting constructor"
-weight: 10
+weight: 50
 params:
   source: "https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#use-local-friends-to-access-the-dependency-inverting-constructor"
 ---

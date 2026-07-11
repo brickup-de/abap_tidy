@@ -1,6 +1,6 @@
 ---
 title: "Construct data types"
-weight: 10
+weight: 20
 params:
   source: "https://github.com/SAP/styleguides/blob/main/clean-abap/sub-sections/ModernABAPLanguageElements.md#construct-data-types"
 ---

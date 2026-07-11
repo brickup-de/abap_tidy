@@ -1,6 +1,6 @@
 ---
 title: "Don't let failures slip through"
-weight: 10
+weight: 20
 params:
   source: "https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#dont-let-failures-slip-through"
 ---

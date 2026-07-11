@@ -1,6 +1,6 @@
 ---
 title: "Abstract classes"
-weight: 50
+weight: 20
 params:
   source: "https://github.com/SAP/styleguides/blob/main/clean-abap/sub-sections/InterfacesVsAbstractClasses.md#abstract-classes"
 ---

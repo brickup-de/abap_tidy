@@ -1,6 +1,6 @@
 ---
 title: "Write custom asserts to shorten code and avoid duplication"
-weight: 10
+weight: 70
 params:
   source: "https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#write-custom-asserts-to-shorten-code-and-avoid-duplication"
 ---

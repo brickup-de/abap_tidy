@@ -1,6 +1,6 @@
 ---
 title: "Prefer composition to inheritance"
-weight: 10
+weight: 20
 params:
   source: "https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#prefer-composition-to-inheritance"
 ---

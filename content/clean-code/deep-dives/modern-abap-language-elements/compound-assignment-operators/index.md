@@ -1,6 +1,6 @@
 ---
 title: "Compound Assignment Operators"
-weight: 60
+weight: 30
 params:
   source: "https://github.com/SAP/styleguides/blob/main/clean-abap/sub-sections/ModernABAPLanguageElements.md#compound-assignment-operators"
 ---

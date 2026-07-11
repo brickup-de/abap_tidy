@@ -1,6 +1,6 @@
 ---
 title: "Consider to use the tool ABAP test double"
-weight: 10
+weight: 20
 params:
   source: "https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#consider-to-use-the-tool-abap-test-double"
 ---

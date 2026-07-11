@@ -1,6 +1,6 @@
 ---
 title: "Avoiding name clashes"
-weight: 10
+weight: 40
 params:
   source: "https://github.com/SAP/styleguides/blob/main/clean-abap/sub-sections/AvoidEncodings.md#avoiding-name-clashes"
 ---

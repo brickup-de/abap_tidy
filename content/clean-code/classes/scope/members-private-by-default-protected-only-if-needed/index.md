@@ -1,6 +1,6 @@
 ---
 title: "Members PRIVATE by default, PROTECTED only if needed"
-weight: 10
+weight: 30
 params:
   source: "https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#members-private-by-default-protected-only-if-needed"
 ---

@@ -1,6 +1,6 @@
 ---
 title: "Make singletons only where multiple instances don't make sense"
-weight: 10
+weight: 50
 params:
   source: "https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#make-singletons-only-where-multiple-instances-dont-make-sense"
 ---

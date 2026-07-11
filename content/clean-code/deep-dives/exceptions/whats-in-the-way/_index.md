@@ -1,6 +1,6 @@
 ---
 title: "What's in the Way"
-weight: 30
+weight: 20
 params:
   source: "https://github.com/SAP/styleguides/blob/main/clean-abap/sub-sections/Exceptions.md#whats-in-the-way"
 ---

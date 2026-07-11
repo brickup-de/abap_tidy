@@ -1,6 +1,6 @@
 ---
 title: "Compromises"
-weight: 10
+weight: 50
 params:
   source: "https://github.com/SAP/styleguides/blob/main/clean-abap/sub-sections/AvoidEncodings.md#compromises"
 ---

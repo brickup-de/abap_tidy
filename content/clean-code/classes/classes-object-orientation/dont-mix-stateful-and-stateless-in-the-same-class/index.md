@@ -1,6 +1,6 @@
 ---
 title: "Don't mix stateful and stateless in the same class"
-weight: 10
+weight: 30
 params:
   source: "https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#dont-mix-stateful-and-stateless-in-the-same-class"
 ---

@@ -1,6 +1,6 @@
 ---
 title: "Throw CX_STATIC_CHECK for manageable exceptions"
-weight: 10
+weight: 40
 params:
   source: "https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#throw-cx_static_check-for-manageable-exceptions"
 ---

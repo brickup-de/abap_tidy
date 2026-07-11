@@ -14,11 +14,21 @@ aggregate, incrementally-grown path mapping across the whole multi-file
 pipeline run -- see scripts/main.py's process_sub_sections loop). parse_tree
 and apply_text_fixups depend on nothing but the file's own text.
 
-Two behaviors are deliberately preserved bug-for-bug from the ContentProcessor
-this module replaces; see scripts/tests/test_tree.py's module docstring for
-the full trace/evidence. In short: weight is only correctly position-based
-for the top two heading levels (deeper headings fall back to a constant),
-and the non-subsection site root's content skips apply_text_fixups entirely.
+One behavior is deliberately preserved from the ContentProcessor this module
+replaces: the non-subsection site root's content skips apply_text_fixups
+entirely (see scripts/tests/test_tree.py's module docstring for the trace).
+
+One behavior is deliberately NOT preserved: ContentProcessor's weight
+formula only correctly ordered a heading's siblings by their true source
+position for the top two heading levels; anything deeper silently collapsed
+to a constant weight (main content) or the parent's own weight
+(sub-sections). This produced a real, confirmed-in-the-rendered-site bug --
+Hugo's sidebar tie-breaks equal weights alphabetically, scrambling the
+reading order of every sub-section and the deeper parts of the main guide.
+parse_tree instead weights every non-root page by its true 1-based position
+among its actual parent's children, at every depth -- trivial here since,
+unlike ContentProcessor.structure, this module's tree nests every heading
+level correctly to begin with.
 """
 import io
 import os
@@ -117,16 +127,7 @@ def parse_tree(
             root = page
         else:
             parent = stack[-1]
-            if is_subsection:
-                base_weight = (subsection_index + 1) * 10
-                page.weight = base_weight if heading_level == 2 else 10
-            else:
-                if heading_level == 2:
-                    page.weight = (len(root.children) + 1) * 10
-                elif heading_level == 3:
-                    page.weight = (len(parent.children) + 1) * 10
-                else:
-                    page.weight = 10
+            page.weight = (len(parent.children) + 1) * 10
             parent.children.append(page)
 
         stack.append(page)

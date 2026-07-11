@@ -1,6 +1,6 @@
 ---
 title: "Copy fields with matching names"
-weight: 10
+weight: 40
 params:
   source: "https://github.com/SAP/styleguides/blob/main/clean-abap/sub-sections/ModernABAPLanguageElements.md#copy-fields-with-matching-names"
 ---

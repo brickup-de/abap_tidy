@@ -1,6 +1,6 @@
 ---
 title: "Interface Pattern"
-weight: 10
+weight: 30
 params:
   source: "https://github.com/SAP/styleguides/blob/main/clean-abap/sub-sections/Enumerations.md#interface-pattern"
 ---

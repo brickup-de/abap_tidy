@@ -1,6 +1,6 @@
 ---
 title: "Consider using immutable instead of getter"
-weight: 10
+weight: 40
 params:
   source: "https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#consider-using-immutable-instead-of-getter"
 ---

@@ -1,6 +1,6 @@
 ---
 title: "Don't add features to production code that are only intended for use during automated testing"
-weight: 10
+weight: 70
 params:
   source: "https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#dont-add-features-to-production-code-that-are-only-intended-for-use-during-automated-testing"
 ---

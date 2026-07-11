@@ -1,6 +1,6 @@
 ---
 title: "Collection Pattern"
-weight: 10
+weight: 40
 params:
   source: "https://github.com/SAP/styleguides/blob/main/clean-abap/sub-sections/Enumerations.md#collection-pattern"
 ---

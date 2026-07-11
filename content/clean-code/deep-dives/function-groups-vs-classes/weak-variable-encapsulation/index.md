@@ -1,6 +1,6 @@
 ---
 title: "Weak variable encapsulation"
-weight: 40
+weight: 60
 params:
   source: "https://github.com/SAP/styleguides/blob/main/clean-abap/sub-sections/FunctionGroupsVsClasses.md#weak-variable-encapsulation"
 ---

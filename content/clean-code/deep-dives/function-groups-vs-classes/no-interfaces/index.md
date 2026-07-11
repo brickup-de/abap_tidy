@@ -1,6 +1,6 @@
 ---
 title: "No interfaces"
-weight: 40
+weight: 30
 params:
   source: "https://github.com/SAP/styleguides/blob/main/clean-abap/sub-sections/FunctionGroupsVsClasses.md#no-interfaces"
 ---

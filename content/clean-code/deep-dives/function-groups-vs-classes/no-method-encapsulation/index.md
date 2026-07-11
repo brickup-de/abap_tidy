@@ -1,6 +1,6 @@
 ---
 title: "No method encapsulation"
-weight: 40
+weight: 70
 params:
   source: "https://github.com/SAP/styleguides/blob/main/clean-abap/sub-sections/FunctionGroupsVsClasses.md#no-method-encapsulation"
 ---

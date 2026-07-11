@@ -1,6 +1,6 @@
 ---
 title: "Enable others to mock you"
-weight: 10
+weight: 20
 params:
   source: "https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#enable-others-to-mock-you"
 ---

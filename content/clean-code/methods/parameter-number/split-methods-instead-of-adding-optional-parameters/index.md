@@ -1,6 +1,6 @@
 ---
 title: "Split methods instead of adding OPTIONAL parameters"
-weight: 10
+weight: 20
 params:
   source: "https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#split-methods-instead-of-adding-optional-parameters"
 ---

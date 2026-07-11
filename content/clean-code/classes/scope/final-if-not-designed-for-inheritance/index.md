@@ -1,6 +1,6 @@
 ---
 title: "FINAL if not designed for inheritance"
-weight: 10
+weight: 20
 params:
   source: "https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#final-if-not-designed-for-inheritance"
 ---

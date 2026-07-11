@@ -1,6 +1,6 @@
 ---
 title: "Omit the self-reference me when calling an instance attribute or method"
-weight: 10
+weight: 70
 params:
   source: "https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#omit-the-self-reference-me-when-calling-an-instance-attribute-or-method"
 ---

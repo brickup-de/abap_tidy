@@ -1,6 +1,6 @@
 ---
 title: "Don't misuse LOCAL FRIENDS to invade the tested code"
-weight: 10
+weight: 60
 params:
   source: "https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#dont-misuse-local-friends-to-invade-the-tested-code"
 ---

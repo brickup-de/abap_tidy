@@ -1,6 +1,6 @@
 ---
 title: "No overloading"
-weight: 40
+weight: 50
 params:
   source: "https://github.com/SAP/styleguides/blob/main/clean-abap/sub-sections/FunctionGroupsVsClasses.md#no-overloading"
 ---

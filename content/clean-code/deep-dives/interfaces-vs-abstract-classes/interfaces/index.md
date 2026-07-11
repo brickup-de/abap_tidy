@@ -1,6 +1,6 @@
 ---
 title: "Interfaces"
-weight: 50
+weight: 10
 params:
   source: "https://github.com/SAP/styleguides/blob/main/clean-abap/sub-sections/InterfacesVsAbstractClasses.md#interfaces"
 ---

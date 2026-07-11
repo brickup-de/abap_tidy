@@ -1,6 +1,6 @@
 ---
 title: "RETURN, EXPORT, or CHANGE exactly one parameter"
-weight: 10
+weight: 40
 params:
   source: "https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#return-export-or-change-exactly-one-parameter"
 ---

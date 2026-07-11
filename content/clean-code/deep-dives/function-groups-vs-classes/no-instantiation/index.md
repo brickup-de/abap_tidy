@@ -1,6 +1,6 @@
 ---
 title: "No instantiation"
-weight: 40
+weight: 10
 params:
   source: "https://github.com/SAP/styleguides/blob/main/clean-abap/sub-sections/FunctionGroupsVsClasses.md#no-instantiation"
 ---
