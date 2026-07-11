@@ -1,0 +1,49 @@
+{{- /*
+  Override of hextra's components/last-updated.html.
+  Adds the generated page's author, source link and license next to the
+  last-updated line, sourced from page params (source) and the
+  clean-code cascade in config.toml (license, license_url, source_copyright,
+  source_name).
+*/ -}}
+{{- $lastUpdated := (T "lastUpdated") | default "Last updated on" -}}
+{{- $page := . -}}
+{{- $hasLastmod := and site.Params.displayUpdatedDate .Lastmod -}}
+{{- $source := .Params.source -}}
+{{- $sourceName := .Params.source_name -}}
+{{- $sourceCopyright := .Params.source_copyright -}}
+{{- $license := .Params.license -}}
+{{- $licenseURL := .Params.license_url -}}
+
+{{- if or $hasLastmod $source -}}
+  <div class="hx:mt-12 hx:mb-8 hx:block hx:text-xs hx:text-gray-500 hx:ltr:text-right hx:rtl:text-left hx:dark:text-gray-400">
+    {{- with $source -}}
+      {{- with $sourceCopyright -}}
+        {{ print "©" . }}
+        <br>
+      {{- end -}}
+      {{- $sourceURL := . -}}
+      {{ print "Source " }}<a class="hx:underline hx:decoration-from-font" target="_blank" rel="noopener noreferrer" href="{{ $sourceURL }}">{{ with $sourceName }}{{ . }}{{ else }}GitHub{{ end }}</a>
+      {{- with $license -}}
+        {{ print " licensed under " }}{{- if $licenseURL -}}
+          <a class="hx:underline hx:decoration-from-font" target="_blank" rel="noopener noreferrer" href="{{ $licenseURL }}">{{ $license }}</a>
+        {{- else -}}
+          {{ $license }}
+        {{- end -}}
+      {{- end -}}
+    {{- end -}}
+    <br>
+    Adapted for visual pleasing presentation
+    {{- if $hasLastmod -}}
+      <br>
+      {{- $datetime := (time.Format "2006-01-02T15:04:05.000Z" .Lastmod) -}}
+      {{ $lastUpdated }} <time datetime="{{ $datetime }}">{{ partial "utils/format-date" .Lastmod }}</time>
+      {{- if site.Params.displayUpdatedAuthor -}}
+        {{- with $page.GitInfo -}}
+          {{ print " • " .AuthorName | safeHTML }}
+        {{- end -}}
+      {{- end -}}
+    {{- end -}}
+  </div>
+{{- else -}}
+  <div class="hx:mt-16"></div>
+{{- end -}}

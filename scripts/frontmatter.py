@@ -3,7 +3,6 @@ Front matter generation for Hugo content pages.
 """
 
 from typing import Optional
-from datetime import datetime
 
 from .utils import kebab_case
 
@@ -30,38 +29,30 @@ def escape_yaml_string(value: str) -> str:
 def generate_front_matter(
     title: str,
     weight: int,
-    source: str,
-    date: Optional[str] = None,
-    license: str = "CC BY 3.0",
-    license_url: str = "https://creativecommons.org/licenses/by/3.0/"
+    source: str
 ) -> str:
     """
     Generate Hugo front matter in YAML format.
-    
+
+    License and last-modified date are supplied via the site config
+    cascade (see config.toml) and Hugo's git-based lastmod resolution,
+    so only the page-specific source link is stored here.
+
     Args:
         title: The page title
         weight: The page weight for sorting
         source: The source URL
-        date: Optional date string (default: today's date)
-        license: License name
-        license_url: License URL
-    
+
     Returns:
         YAML front matter string
     """
-    if date is None:
-        date = datetime.now().strftime('%Y-%m-%d')
-    
     # Escape the title for YAML
     escaped_title = escape_yaml_string(title)
-    
+
     front_matter = f"""---
 title: "{escaped_title}"
 weight: {weight}
-date: {date}
 params:
-  license: "{license}"
-  license_url: "{license_url}"
   source: "{source}"
 ---
 """

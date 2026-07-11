@@ -1,15 +1,20 @@
 baseURL       = "https://localhost:1313/"
 languageCode  = "en-us"
-title         = "Tidy ABAP"
+title         = "abap_tidy"
 enableGitInfo = true
 
 [[cascade]]
 type = "docs"
+[cascade.params]
+license          = "CC BY 3.0"
+license_url      = "https://creativecommons.org/licenses/by/3.0/"
+source_copyright = "2019-2021 SAP SE or an SAP affiliate company and styleguides contributors"
+source_name      = "SAP/styleguides"
 [cascade._target]
 path = "{/clean-code,/clean-code/**}"
 
 [frontmatter]
-lastmod = [":git", "lastmod", "date", ":fileModTime"]
+lastmod = [":git", "lastmod", ":fileModTime"]
 
 [markup.goldmark.renderer]
 unsafe = true # Allow HTML in markdown
@@ -29,11 +34,10 @@ weight = 2
 type = "search"
 
 [[menu.main]]
-name   = "GitHub"
-url    = "https://github.com/SAP/styleguides"
-weight = 3
-[menu.main.params]
-icon = "github"
+name        = "GitHub"
+url         = "https://github.com/SAP/styleguides"
+weight      = 3
+params.icon = "github"
 
 [[module.imports]]
 path = "github.com/imfing/hextra"
@@ -42,12 +46,12 @@ path = "github.com/imfing/hextra"
 pagerSize = 10
 
 [params]
-description        = "Clean Code guidelines for ABAP development"
+description        = "ABAP resources in a human-friendly format"
 displayUpdatedDate = true
 dateFormat         = "2006-01-02"
 
 [params.author]
-name = "SAP Styleguides"
+name = "Tobias Buckdahn"
 
 [params.navbar]
 displayTitle = true
