@@ -12,7 +12,10 @@ __pycache__
 .vscode/
 *.swp
 *.swo
+
+# AI helpers
 .gitmessage
+/.claude
 
 # OS files
 .DS_Store

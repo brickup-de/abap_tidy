@@ -32,22 +32,20 @@ class CrossReferenceConverter:
         self.path_mapping = path_mapping
         self.conversion_cache = {}
     
-    def convert_link(self, match: re.Match) -> str:
+    def convert_link(self, link_text: str, anchor: str) -> str:
         """
-        Convert a single markdown link match to Hugo path.
-        
+        Convert a single markdown link's text/anchor to a Hugo path.
+
         Args:
-            match: Regex match object with groups (text, anchor)
-        
+            link_text: The markdown link's visible text
+            anchor: The markdown link's target (raw, before any resolution)
+
         Returns:
             Converted link string
         """
-        link_text = match.group(1)
-        anchor = match.group(2)
-        
         # If it's already an absolute path, keep it
         if anchor.startswith('/') or anchor.startswith('http'):
-            return match.group(0)
+            return f"[{link_text}]({anchor})"
 
         # Handle links that point at a source markdown file rather than a
         # bare #anchor, e.g. "sub-sections/Enumerations.md" or
@@ -116,28 +114,32 @@ class CrossReferenceConverter:
         # Last resort: return original link but with /clean-code/ prefix
         # This handles external links or links we can't resolve
         if anchor.startswith('http') or anchor.startswith('/'):
-            return match.group(0)
-        
+            return f"[{link_text}]({anchor})"
+
         # For internal links that we couldn't resolve, use a reasonable default
         return f"[{link_text}](/clean-code/{kebab_anchor}/)"
-    
+
     def convert_content(self, content: str) -> str:
         """
         Convert all markdown links in content to Hugo paths.
-        
+
         Args:
             content: Markdown content with links
-        
+
         Returns:
             Content with converted links
         """
         # Pattern for markdown links: [text](url)
         # We want to catch both absolute and relative links
         link_pattern = r'\[([^\]]+)\]\(([^\)]+)\)'
-        
+
         # Convert all links
-        result = re.sub(link_pattern, self.convert_link, content)
-        
+        result = re.sub(
+            link_pattern,
+            lambda match: self.convert_link(match.group(1), match.group(2)),
+            content
+        )
+
         return result
     
 def build_path_mapping(headings_data: List[Dict]) -> Dict[str, str]:
