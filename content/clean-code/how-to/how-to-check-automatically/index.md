@@ -1,5 +1,6 @@
 ---
 title: "How to Check Automatically"
+linkTitle: "Check Automatically"
 weight: 30
 params:
   source: "https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#how-to-check-automatically"

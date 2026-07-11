@@ -1,5 +1,6 @@
 ---
 title: "Make messages easy to find"
+linkTitle: "Make them easy to find"
 weight: 10
 params:
   source: "https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#make-messages-easy-to-find"

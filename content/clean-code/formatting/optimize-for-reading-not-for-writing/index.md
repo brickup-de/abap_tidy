@@ -1,5 +1,6 @@
 ---
 title: "Optimize for reading, not for writing"
+linkTitle: "Optimize for reading"
 weight: 20
 params:
   source: "https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#optimize-for-reading-not-for-writing"

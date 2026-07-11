@@ -1,5 +1,6 @@
 ---
 title: "Few, focused assertions"
+linkTitle: "Few and focused"
 weight: 10
 params:
   source: "https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#few-focused-assertions"

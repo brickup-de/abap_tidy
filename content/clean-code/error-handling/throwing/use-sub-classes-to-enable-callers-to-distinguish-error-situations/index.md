@@ -1,5 +1,6 @@
 ---
 title: "Use sub-classes to enable callers to distinguish error situations"
+linkTitle: "Use sub-classes for distiction"
 weight: 30
 params:
   source: "https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#use-sub-classes-to-enable-callers-to-distinguish-error-situations"

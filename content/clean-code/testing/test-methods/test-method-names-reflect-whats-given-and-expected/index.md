@@ -1,5 +1,6 @@
 ---
 title: "Test method names: reflect what's given and expected"
+linkTitle: "Name methods on what's given/expected"
 weight: 10
 params:
   source: "https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#test-method-names-reflect-whats-given-and-expected"

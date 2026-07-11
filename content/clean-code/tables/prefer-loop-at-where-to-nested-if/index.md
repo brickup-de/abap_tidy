@@ -1,5 +1,6 @@
 ---
 title: "Prefer LOOP AT WHERE to nested IF"
+linkTitle: "Prefer LOOP WHERE to nested IF"
 weight: 60
 params:
   source: "https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#prefer-loop-at-where-to-nested-if"

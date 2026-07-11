@@ -1,5 +1,6 @@
 ---
 title: "Prefer NEW to CREATE OBJECT"
+linkTitle: "Prefer NEW"
 weight: 10
 params:
   source: "https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#prefer-new-to-create-object"

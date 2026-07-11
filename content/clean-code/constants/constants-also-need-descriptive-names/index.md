@@ -1,5 +1,6 @@
 ---
 title: "Constants also need descriptive names"
+linkTitle: "Descriptive Names"
 weight: 20
 params:
   source: "https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#constants-also-need-descriptive-names"

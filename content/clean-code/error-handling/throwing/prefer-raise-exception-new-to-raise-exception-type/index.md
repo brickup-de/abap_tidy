@@ -1,5 +1,6 @@
 ---
 title: "Prefer RAISE EXCEPTION NEW to RAISE EXCEPTION TYPE"
+linkTitle: "Prefer RAISE EXCEPTION NEW"
 weight: 80
 params:
   source: "https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#prefer-raise-exception-new-to-raise-exception-type"

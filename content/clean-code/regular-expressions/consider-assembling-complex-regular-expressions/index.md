@@ -1,5 +1,6 @@
 ---
 title: "Consider assembling complex regular expressions"
+linkTitle: "Assemble complex ones"
 weight: 30
 params:
   source: "https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#consider-assembling-complex-regular-expressions"

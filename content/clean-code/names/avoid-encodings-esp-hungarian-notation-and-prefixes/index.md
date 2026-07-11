@@ -1,5 +1,6 @@
 ---
 title: "Avoid encodings, esp. Hungarian notation and prefixes"
+linkTitle: "Avoid encodings and prefixes"
 weight: 120
 params:
   source: "https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#avoid-encodings-esp-hungarian-notation-and-prefixes"

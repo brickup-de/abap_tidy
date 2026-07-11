@@ -29,7 +29,8 @@ def escape_yaml_string(value: str) -> str:
 def generate_front_matter(
     title: str,
     weight: int,
-    source: str
+    source: str,
+    link_title: Optional[str] = None
 ) -> str:
     """
     Generate Hugo front matter in YAML format.
@@ -42,21 +43,24 @@ def generate_front_matter(
         title: The page title
         weight: The page weight for sorting
         source: The source URL
+        link_title: Optional short-title override for the sidebar/breadcrumb
+            (Hugo's native linkTitle field, already preferred over title by
+            the theme's utils/title partial). Omitted from the output
+            entirely when None, so most pages carry no redundant field.
 
     Returns:
         YAML front matter string
     """
-    # Escape the title for YAML
-    escaped_title = escape_yaml_string(title)
+    lines = ['---', f'title: "{escape_yaml_string(title)}"']
+    if link_title:
+        lines.append(f'linkTitle: "{escape_yaml_string(link_title)}"')
+    lines.append(f'weight: {weight}')
+    lines.append('params:')
+    lines.append(f'  source: "{source}"')
+    lines.append('---')
+    lines.append('')
 
-    front_matter = f"""---
-title: "{escaped_title}"
-weight: {weight}
-params:
-  source: "{source}"
----
-"""
-    return front_matter
+    return '\n'.join(lines)
 
 
 def get_source_url(

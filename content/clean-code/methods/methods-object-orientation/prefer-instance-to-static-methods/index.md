@@ -1,5 +1,6 @@
 ---
 title: "Prefer instance to static methods"
+linkTitle: "Prefer instance"
 weight: 10
 params:
   source: "https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#prefer-instance-to-static-methods"

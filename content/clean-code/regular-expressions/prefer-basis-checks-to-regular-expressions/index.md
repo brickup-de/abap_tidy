@@ -1,5 +1,6 @@
 ---
 title: "Prefer basis checks to regular expressions"
+linkTitle: "Prefer basis checks"
 weight: 20
 params:
   source: "https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#prefer-basis-checks-to-regular-expressions"

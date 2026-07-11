@@ -1,5 +1,6 @@
 ---
 title: "Focus on the happy path or error handling, but not both"
+linkTitle: "Focus on either happy path or error handling"
 weight: 20
 params:
   source: "https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#focus-on-the-happy-path-or-error-handling-but-not-both"

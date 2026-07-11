@@ -1,5 +1,6 @@
 ---
 title: "Prefer object orientation to procedural programming"
+linkTitle: "Prefer object orientation"
 weight: 30
 params:
   source: "https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#prefer-object-orientation-to-procedural-programming"

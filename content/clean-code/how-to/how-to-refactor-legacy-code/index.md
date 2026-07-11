@@ -1,5 +1,6 @@
 ---
 title: "How to Refactor Legacy Code"
+linkTitle: "Refactor Legacy Code"
 weight: 20
 params:
   source: "https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#how-to-refactor-legacy-code"

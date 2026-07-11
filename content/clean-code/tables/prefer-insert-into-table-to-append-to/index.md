@@ -1,5 +1,6 @@
 ---
 title: "Prefer INSERT INTO TABLE to APPEND TO"
+linkTitle: "Prefer INSERT to APPEND"
 weight: 30
 params:
   source: "https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#prefer-insert-into-table-to-append-to"

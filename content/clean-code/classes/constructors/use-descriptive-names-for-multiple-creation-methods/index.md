@@ -1,5 +1,6 @@
 ---
 title: "Use descriptive names for multiple creation methods"
+linkTitle: "Use descriptive names"
 weight: 40
 params:
   source: "https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#use-descriptive-names-for-multiple-creation-methods"

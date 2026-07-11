@@ -4,7 +4,8 @@ Utility functions for Clean ABAP to Hugo conversion.
 
 import re
 import os
-from typing import List, Optional
+import tomllib
+from typing import Dict, List, Optional
 
 
 def kebab_case(text: str) -> str:
@@ -354,3 +355,19 @@ def ensure_directory(path: str) -> None:
     Ensure that a directory exists, creating it if necessary.
     """
     os.makedirs(path, exist_ok=True)
+
+
+def load_link_titles(repo_root: str) -> Dict[str, str]:
+    """
+    Load sidebar/breadcrumb short-title overrides from data/mapping.toml's
+    [linktitles] table, keyed by each page's generated path under
+    content/clean-code (folder slugs joined by "/", no leading/trailing
+    slash -- see scripts/writer.py's link_title lookup). Optional: returns
+    {} if the file doesn't exist, so a conversion run never depends on it.
+    """
+    path = os.path.join(repo_root, 'data', 'mapping.toml')
+    if not os.path.exists(path):
+        return {}
+    with open(path, 'rb') as f:
+        data = tomllib.load(f)
+    return data.get('linktitles', {})

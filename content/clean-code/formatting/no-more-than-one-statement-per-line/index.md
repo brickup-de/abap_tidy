@@ -1,5 +1,6 @@
 ---
 title: "No more than one statement per line"
+linkTitle: "One statement per line"
 weight: 50
 params:
   source: "https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#no-more-than-one-statement-per-line"

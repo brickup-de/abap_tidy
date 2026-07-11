@@ -1,5 +1,6 @@
 ---
 title: "Native enumerations"
+linkTitle: "Native"
 weight: 10
 params:
   source: "https://github.com/SAP/styleguides/blob/main/clean-abap/sub-sections/Enumerations.md#native-enumerations"

@@ -1,5 +1,6 @@
 ---
 title: "If your global class is CREATE PRIVATE, leave the CONSTRUCTOR public"
+linkTitle: "Keep public on CREATE PRIVATE"
 weight: 20
 params:
   source: "https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#if-your-global-class-is-create-private-leave-the-constructor-public"

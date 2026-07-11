@@ -1,5 +1,6 @@
 ---
 title: "Don't mock stuff that's not needed"
+linkTitle: "Don't mock stuff needlessly"
 weight: 90
 params:
   source: "https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#dont-mock-stuff-thats-not-needed"

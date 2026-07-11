@@ -1,5 +1,6 @@
 ---
 title: "How to Disagree"
+linkTitle: "Disagree"
 weight: 50
 params:
   source: "https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#how-to-disagree"

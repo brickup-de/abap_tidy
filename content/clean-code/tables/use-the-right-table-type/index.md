@@ -1,5 +1,6 @@
 ---
 title: "Use the right table type"
+linkTitle: "Use the right type"
 weight: 10
 params:
   source: "https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#use-the-right-table-type"

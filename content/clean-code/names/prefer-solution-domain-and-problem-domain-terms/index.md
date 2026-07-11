@@ -1,5 +1,6 @@
 ---
 title: "Prefer solution domain and problem domain terms"
+linkTitle: "Prefer domain terms"
 weight: 20
 params:
   source: "https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#prefer-solution-domain-and-problem-domain-terms"

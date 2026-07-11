@@ -1,5 +1,6 @@
 ---
 title: "Prefer READ TABLE to LOOP AT"
+linkTitle: "Prefer READ TABLE to LOOP"
 weight: 50
 params:
   source: "https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#prefer-read-table-to-loop-at"

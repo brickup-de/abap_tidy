@@ -1,5 +1,6 @@
 ---
 title: "Use ABAP_TRUE and ABAP_FALSE for comparisons"
+linkTitle: "Compare with ABAP_TRUE/ABAP_FALSE"
 weight: 30
 params:
   source: "https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#use-abap_true-and-abap_false-for-comparisons"

@@ -1,5 +1,6 @@
 ---
 title: "Prefer RETURNING to EXPORTING"
+linkTitle: "Prefer RETURNING"
 weight: 10
 params:
   source: "https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#prefer-returning-to-exporting"

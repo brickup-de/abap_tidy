@@ -190,5 +190,82 @@ class WriteTreeSubSectionTests(unittest.TestCase):
             self.assertFalse(os.path.isfile(os.path.join(out_dir, 'chapter', 'diagram.vsdx')))
 
 
+class WriteTreeLinkTitleTests(unittest.TestCase):
+    """
+    link_titles is keyed by each page's path relative to content_root (not
+    base_path) -- see write_tree's docstring for why those differ for a
+    sub-section. Only tested here since generate_front_matter's own
+    link_title behavior is covered in test_frontmatter.py.
+    """
+
+    def test_looks_up_by_path_relative_to_content_root_and_writes_link_title(self):
+        chapter = leaf("How to Get Started with Clean Code", ["how-to", "how-to-get-started"], weight=10)
+        root = Page(
+            title="Site Title", content="", raw_content="",
+            path_parts=[], level=1, line=1, weight=1, children=[chapter],
+        )
+        link_titles = {"how-to/how-to-get-started": "Get Started"}
+
+        with tempfile.TemporaryDirectory() as tmp:
+            write_tree(root, tmp, source_file="/src/CleanABAP.md", is_subsection=False, link_titles=link_titles)
+
+            with open(os.path.join(tmp, 'how-to', 'how-to-get-started', 'index.md'), encoding='utf-8') as f:
+                text = f.read()
+
+        self.assertIn('linkTitle: "Get Started"', text)
+
+    def test_omits_link_title_when_mapping_has_no_entry_for_the_page(self):
+        chapter = leaf("Chapter", ["chapter"], weight=10)
+        root = Page(
+            title="Site Title", content="", raw_content="",
+            path_parts=[], level=1, line=1, weight=1, children=[chapter],
+        )
+
+        with tempfile.TemporaryDirectory() as tmp:
+            write_tree(root, tmp, source_file="/src/CleanABAP.md", is_subsection=False, link_titles={})
+
+            with open(os.path.join(tmp, 'chapter', 'index.md'), encoding='utf-8') as f:
+                text = f.read()
+
+        self.assertNotIn('linkTitle', text)
+
+    def test_omits_link_title_when_mapping_value_equals_the_page_title(self):
+        chapter = leaf("Chapter", ["chapter"], weight=10)
+        root = Page(
+            title="Site Title", content="", raw_content="",
+            path_parts=[], level=1, line=1, weight=1, children=[chapter],
+        )
+        link_titles = {"chapter": "Chapter"}  # Unedited default from data/mapping.toml.
+
+        with tempfile.TemporaryDirectory() as tmp:
+            write_tree(root, tmp, source_file="/src/CleanABAP.md", is_subsection=False, link_titles=link_titles)
+
+            with open(os.path.join(tmp, 'chapter', 'index.md'), encoding='utf-8') as f:
+                text = f.read()
+
+        self.assertNotIn('linkTitle', text)
+
+    def test_sub_section_page_is_looked_up_relative_to_content_root_not_base_path(self):
+        chapter = leaf("Guidelines", ["guidelines"], weight=10)
+        root = Page(
+            title="Deep Dive Title", content="", raw_content="",
+            path_parts=[], level=1, line=1, weight=30, children=[chapter],
+        )
+        link_titles = {"deep-dives/deep-dive-title/guidelines": "Short Guidelines"}
+
+        with tempfile.TemporaryDirectory() as content_root:
+            subsection_base = os.path.join(content_root, 'deep-dives', 'deep-dive-title')
+
+            write_tree(
+                root, subsection_base, source_file="/src/sub-sections/DeepDive.md", is_subsection=True,
+                content_root=content_root, link_titles=link_titles,
+            )
+
+            with open(os.path.join(subsection_base, 'guidelines', 'index.md'), encoding='utf-8') as f:
+                text = f.read()
+
+        self.assertIn('linkTitle: "Short Guidelines"', text)
+
+
 if __name__ == '__main__':
     unittest.main()

@@ -1,5 +1,6 @@
 ---
 title: "Do not use field symbols for dynamic data access"
+linkTitle: "Don't use field symbols for dynamic data access"
 weight: 40
 params:
   source: "https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#do-not-use-field-symbols-for-dynamic-data-access"

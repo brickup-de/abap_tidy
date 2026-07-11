@@ -1,5 +1,6 @@
 ---
 title: "Prefer exceptions to return codes"
+linkTitle: "Prefer exceptions"
 weight: 10
 params:
   source: "https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#prefer-exceptions-to-return-codes"

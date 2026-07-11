@@ -1,5 +1,6 @@
 ---
 title: "Use the ABAP Formatter before activating"
+linkTitle: "Use ABAP Formatter before activating"
 weight: 30
 params:
   source: "https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#use-the-abap-formatter-before-activating"

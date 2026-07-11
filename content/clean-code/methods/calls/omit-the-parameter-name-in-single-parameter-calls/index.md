@@ -1,5 +1,6 @@
 ---
 title: "Omit the parameter name in single parameter calls"
+linkTitle: "Omit parameter name in single parameter calls"
 weight: 60
 params:
   source: "https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#omit-the-parameter-name-in-single-parameter-calls"

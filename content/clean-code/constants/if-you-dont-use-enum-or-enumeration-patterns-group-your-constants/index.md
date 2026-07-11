@@ -1,5 +1,6 @@
 ---
 title: "If you don't use ENUM or enumeration patterns, group your constants"
+linkTitle: "Grouping"
 weight: 40
 params:
   source: "https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#if-you-dont-use-enum-or-enumeration-patterns-group-your-constants"

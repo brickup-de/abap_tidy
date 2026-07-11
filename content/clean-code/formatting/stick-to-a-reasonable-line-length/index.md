@@ -1,5 +1,6 @@
 ---
 title: "Stick to a reasonable line length"
+linkTitle: "Reasonable line length"
 weight: 60
 params:
   source: "https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#stick-to-a-reasonable-line-length"

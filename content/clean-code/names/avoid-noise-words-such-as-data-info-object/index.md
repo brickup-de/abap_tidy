@@ -1,5 +1,6 @@
 ---
 title: "Avoid noise words such as \"data\", \"info\", \"object\""
+linkTitle: "Avoid noise words"
 weight: 90
 params:
   source: "https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#avoid-noise-words-such-as-data-info-object"

@@ -1,5 +1,6 @@
 ---
 title: "Use constants to describe purpose and importance of test data"
+linkTitle: "Use constants to describe purpose/importance"
 weight: 30
 params:
   source: "https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#use-constants-to-describe-purpose-and-importance-of-test-data"

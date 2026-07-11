@@ -1,5 +1,6 @@
 ---
 title: "How to Get Started with Clean Code"
+linkTitle: "Get Started"
 weight: 10
 params:
   source: "https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#how-to-get-started-with-clean-code"

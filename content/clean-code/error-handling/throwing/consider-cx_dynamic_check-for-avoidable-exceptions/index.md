@@ -1,5 +1,6 @@
 ---
 title: "Consider CX_DYNAMIC_CHECK for avoidable exceptions"
+linkTitle: "Consider CX_DYNAMIC_CHECK when avoidable"
 weight: 60
 params:
   source: "https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#consider-cx_dynamic_check-for-avoidable-exceptions"

@@ -13,6 +13,7 @@ normal per-page write path.
 import os
 import re
 import shutil
+from typing import Dict, Optional
 
 from .tree import Page
 from .frontmatter import generate_front_matter, get_root_source_url, get_source_url
@@ -22,17 +23,34 @@ _IMAGE_REF_PATTERN = re.compile(r'!\[[^\]]*\]\(([^)]+)\)')
 _IMAGE_EXTENSIONS = ('.png', '.jpg', '.jpeg', '.gif', '.svg')
 
 
-def write_tree(root: Page, base_path: str, source_file: str, is_subsection: bool = False) -> int:
+def write_tree(
+    root: Page,
+    base_path: str,
+    source_file: str,
+    is_subsection: bool = False,
+    content_root: Optional[str] = None,
+    link_titles: Optional[Dict[str, str]] = None,
+) -> int:
     """
     Write a page tree's content to disk. Returns the number of files written.
+
+    content_root/link_titles feed the linkTitle lookup in _write_page --
+    content_root defaults to base_path (correct for main content, where
+    they're the same directory; a sub-section's write_tree call passes
+    content_root explicitly, since its own base_path is nested under
+    content_root/deep-dives/<folder>, and the link_titles table is keyed by
+    path relative to content_root, not base_path).
     """
+    if content_root is None:
+        content_root = base_path
+
     if not is_subsection:
         count = _write_root_page(root, base_path)
         for child in root.children:
-            count += _write_page(child, base_path, source_file, is_subsection)
+            count += _write_page(child, base_path, source_file, is_subsection, content_root, link_titles)
         return count
 
-    return _write_page(root, base_path, source_file, is_subsection)
+    return _write_page(root, base_path, source_file, is_subsection, content_root, link_titles)
 
 
 def _write_root_page(root: Page, base_path: str) -> int:
@@ -47,11 +65,24 @@ def _write_root_page(root: Page, base_path: str) -> int:
     return 1
 
 
-def _write_page(page: Page, base_path: str, source_file: str, is_subsection: bool) -> int:
+def _write_page(
+    page: Page,
+    base_path: str,
+    source_file: str,
+    is_subsection: bool,
+    content_root: str,
+    link_titles: Optional[Dict[str, str]],
+) -> int:
     folder_path = os.path.join(base_path, *page.path_parts)
+    link_titles = link_titles or {}
 
     source_url = get_source_url(source_file, is_subsection=is_subsection, heading_text=page.title)
-    front_matter = generate_front_matter(title=page.title, weight=page.weight, source=source_url)
+    rel_path = os.path.relpath(folder_path, content_root).replace(os.sep, '/')
+    link_title = link_titles.get(rel_path)
+    if link_title == page.title:
+        link_title = None  # No point stating the override if it doesn't shorten anything.
+
+    front_matter = generate_front_matter(title=page.title, weight=page.weight, source=source_url, link_title=link_title)
     content = front_matter
     if page.content:
         content += f"\n{page.content}\n"
@@ -65,7 +96,7 @@ def _write_page(page: Page, base_path: str, source_file: str, is_subsection: boo
 
     count = 1
     for child in page.children:
-        count += _write_page(child, base_path, source_file, is_subsection)
+        count += _write_page(child, base_path, source_file, is_subsection, content_root, link_titles)
     return count
 
 

@@ -1,5 +1,6 @@
 ---
 title: "Exceptions are for errors, not for regular cases"
+linkTitle: "Not for regular cases"
 weight: 10
 params:
   source: "https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#exceptions-are-for-errors-not-for-regular-cases"

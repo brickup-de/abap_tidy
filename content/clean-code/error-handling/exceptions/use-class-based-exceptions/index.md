@@ -1,5 +1,6 @@
 ---
 title: "Use class-based exceptions"
+linkTitle: "Use class-based ones"
 weight: 20
 params:
   source: "https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#use-class-based-exceptions"

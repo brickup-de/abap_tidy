@@ -1,5 +1,6 @@
 ---
 title: "Add a single blank line to separate things, but not more"
+linkTitle: "Separate with single blank line"
 weight: 80
 params:
   source: "https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#add-a-single-blank-line-to-separate-things-but-not-more"

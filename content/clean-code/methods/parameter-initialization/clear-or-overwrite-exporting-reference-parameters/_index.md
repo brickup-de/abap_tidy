@@ -1,5 +1,6 @@
 ---
 title: "Clear or overwrite EXPORTING reference parameters"
+linkTitle: "Clear EXPORTING reference parameters"
 weight: 10
 params:
   source: "https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#clear-or-overwrite-exporting-reference-parameters"

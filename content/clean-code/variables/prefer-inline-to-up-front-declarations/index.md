@@ -1,5 +1,6 @@
 ---
 title: "Prefer inline to up-front declarations"
+linkTitle: "Prefer inline declaration"
 weight: 10
 params:
   source: "https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#prefer-inline-to-up-front-declarations"

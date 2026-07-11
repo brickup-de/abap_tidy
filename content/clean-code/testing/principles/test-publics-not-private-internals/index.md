@@ -1,5 +1,6 @@
 ---
 title: "Test publics, not private internals"
+linkTitle: "Test publics, not privates"
 weight: 50
 params:
   source: "https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#test-publics-not-private-internals"

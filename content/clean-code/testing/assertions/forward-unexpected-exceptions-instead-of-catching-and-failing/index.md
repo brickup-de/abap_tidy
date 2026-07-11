@@ -1,5 +1,6 @@
 ---
 title: "Forward unexpected exceptions instead of catching and failing"
+linkTitle: "Forward unexpected exceptions"
 weight: 60
 params:
   source: "https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#forward-unexpected-exceptions-instead-of-catching-and-failing"

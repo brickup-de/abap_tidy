@@ -1,5 +1,6 @@
 ---
 title: "Use pattern names only if you mean them"
+linkTitle: "Use pattern names correctly"
 weight: 110
 params:
   source: "https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#use-pattern-names-only-if-you-mean-them"

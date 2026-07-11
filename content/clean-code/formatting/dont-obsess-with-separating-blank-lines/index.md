@@ -1,5 +1,6 @@
 ---
 title: "Don't obsess with separating blank lines"
+linkTitle: "Don't obsess with blank lines"
 weight: 90
 params:
   source: "https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#dont-obsess-with-separating-blank-lines"

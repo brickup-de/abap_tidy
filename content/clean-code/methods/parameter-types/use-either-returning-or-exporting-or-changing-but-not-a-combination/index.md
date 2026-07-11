@@ -1,5 +1,6 @@
 ---
 title: "Use either RETURNING or EXPORTING or CHANGING, but not a combination"
+linkTitle: "Use either RETURNING or EXPORTING or CHANGING"
 weight: 30
 params:
   source: "https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#use-either-returning-or-exporting-or-changing-but-not-a-combination"

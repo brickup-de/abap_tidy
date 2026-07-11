@@ -1,5 +1,6 @@
 ---
 title: "Prefer pragmas to pseudo comments"
+linkTitle: "Prefer pragmas to pseudo-comments"
 weight: 140
 params:
   source: "https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#prefer-pragmas-to-pseudo-comments"

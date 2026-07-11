@@ -1,5 +1,6 @@
 ---
 title: "Dump for totally unrecoverable situations"
+linkTitle: "Dump when unrecoverable"
 weight: 70
 params:
   source: "https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#dump-for-totally-unrecoverable-situations"

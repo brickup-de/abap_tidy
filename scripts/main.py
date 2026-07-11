@@ -8,7 +8,7 @@ import sys
 import shutil
 from typing import List, Dict, Tuple
 
-from .utils import kebab_case, ensure_directory
+from .utils import kebab_case, ensure_directory, load_link_titles
 from .frontmatter import generate_front_matter, get_deep_dives_source_url
 from .crossref import CrossReferenceConverter, build_path_mapping
 from .tree import Page, parse_tree, resolve_links, apply_text_fixups, walk
@@ -134,13 +134,20 @@ def _converter_for(own_heading_data: List[Dict], all_heading_data: List[Dict]) -
     return CrossReferenceConverter(build_path_mapping(all_heading_data + own_heading_data))
 
 
-def write_main(tree: Page, output_dir: str, main_file: str, own_heading_data: List[Dict], all_heading_data: List[Dict]) -> None:
+def write_main(
+    tree: Page,
+    output_dir: str,
+    main_file: str,
+    own_heading_data: List[Dict],
+    all_heading_data: List[Dict],
+    link_titles: Dict[str, str],
+) -> None:
     """Resolve links and fixups against the full cross-file mapping, then write the main content."""
     converter = _converter_for(own_heading_data, all_heading_data)
     tree = resolve_links(tree, converter)
     tree = apply_text_fixups(tree, is_subsection=False)
 
-    file_count = write_tree(tree, output_dir, source_file=main_file, is_subsection=False)
+    file_count = write_tree(tree, output_dir, source_file=main_file, is_subsection=False, link_titles=link_titles)
     print(f"Generated {file_count} files from main content")
 
 
@@ -151,6 +158,7 @@ def write_sub_section(
     output_dir: str,
     own_heading_data: List[Dict],
     all_heading_data: List[Dict],
+    link_titles: Dict[str, str],
 ) -> None:
     """Resolve links and fixups against the full cross-file mapping, then write one sub-section."""
     filename = os.path.basename(file_path)
@@ -161,7 +169,10 @@ def write_sub_section(
     tree = resolve_links(tree, converter)
     tree = apply_text_fixups(tree, is_subsection=True)
 
-    file_count = write_tree(tree, subsection_base, source_file=file_path, is_subsection=True)
+    file_count = write_tree(
+        tree, subsection_base, source_file=file_path, is_subsection=True,
+        content_root=output_dir, link_titles=link_titles,
+    )
     print(f"Generated {file_count} files from {filename}")
 
 
@@ -200,9 +211,11 @@ def run_conversion(repo_root: str, output_dir: str) -> None:
     for _file_path, _folder_name, _tree, heading_data in sub_sections:
         all_heading_data.extend(heading_data)
 
-    write_main(main_tree, output_dir, source_files['main'], main_heading_data, all_heading_data)
+    link_titles = load_link_titles(repo_root)
+
+    write_main(main_tree, output_dir, source_files['main'], main_heading_data, all_heading_data, link_titles)
     for file_path, folder_name, tree, heading_data in sub_sections:
-        write_sub_section(file_path, folder_name, tree, output_dir, heading_data, all_heading_data)
+        write_sub_section(file_path, folder_name, tree, output_dir, heading_data, all_heading_data, link_titles)
 
     # Create the deep-dives/_index.md file
     deep_dives_path = os.path.join(output_dir, 'deep-dives')

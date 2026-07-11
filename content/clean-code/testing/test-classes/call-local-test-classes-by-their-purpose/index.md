@@ -1,5 +1,6 @@
 ---
 title: "Call local test classes by their purpose"
+linkTitle: "Naming by purpose"
 weight: 10
 params:
   source: "https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#call-local-test-classes-by-their-purpose"

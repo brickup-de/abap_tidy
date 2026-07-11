@@ -1,5 +1,6 @@
 ---
 title: "Prefer CASE to ELSE IF for multiple alternative conditions"
+linkTitle: "Prefer CASE"
 weight: 20
 params:
   source: "https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#prefer-case-to-else-if-for-multiple-alternative-conditions"

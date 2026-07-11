@@ -1,5 +1,6 @@
 ---
 title: "Use XSDBOOL to set Boolean variables"
+linkTitle: "Set using XSDBOOL"
 weight: 40
 params:
   source: "https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#use-xsdbool-to-set-boolean-variables"

@@ -1,5 +1,6 @@
 ---
 title: "Use same abbreviations everywhere"
+linkTitle: "Use abbreviations consistently"
 weight: 70
 params:
   source: "https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#use-same-abbreviations-everywhere"

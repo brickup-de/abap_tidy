@@ -1,5 +1,6 @@
 ---
 title: "Use nouns for classes and verbs for methods"
+linkTitle: "Use noun classes and verb methods"
 weight: 80
 params:
   source: "https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#use-nouns-for-classes-and-verbs-for-methods"

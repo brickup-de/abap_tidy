@@ -1,5 +1,6 @@
 ---
 title: "Use Booleans wisely"
+linkTitle: "Use wisely"
 weight: 10
 params:
   source: "https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#use-booleans-wisely"

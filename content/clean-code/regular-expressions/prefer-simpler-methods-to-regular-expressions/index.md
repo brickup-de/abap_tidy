@@ -1,5 +1,6 @@
 ---
 title: "Prefer simpler methods to regular expressions"
+linkTitle: "Prefer simpler methods"
 weight: 10
 params:
   source: "https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#prefer-simpler-methods-to-regular-expressions"

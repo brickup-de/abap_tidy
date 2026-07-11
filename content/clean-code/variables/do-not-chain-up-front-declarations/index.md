@@ -1,5 +1,6 @@
 ---
 title: "Do not chain up-front declarations"
+linkTitle: "Don't chain up-front declarations"
 weight: 30
 params:
   source: "https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#do-not-chain-up-front-declarations"

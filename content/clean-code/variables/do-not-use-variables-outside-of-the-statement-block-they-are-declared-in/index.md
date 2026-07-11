@@ -1,5 +1,6 @@
 ---
 title: "Do not use variables outside of the statement block they are declared in"
+linkTitle: "Don't use outside of declaring statement block"
 weight: 20
 params:
   source: "https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#do-not-use-variables-outside-of-the-statement-block-they-are-declared-in"

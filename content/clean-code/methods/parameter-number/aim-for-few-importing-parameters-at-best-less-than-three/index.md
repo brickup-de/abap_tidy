@@ -1,5 +1,6 @@
 ---
 title: "Aim for few IMPORTING parameters, at best less than three"
+linkTitle: "Aim for few IMPORTING parameters"
 weight: 10
 params:
   source: "https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#aim-for-few-importing-parameters-at-best-less-than-three"

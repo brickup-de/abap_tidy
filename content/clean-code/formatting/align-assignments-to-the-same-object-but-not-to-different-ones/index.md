@@ -1,5 +1,6 @@
 ---
 title: "Align assignments to the same object, but not to different ones"
+linkTitle: "Align assignments to same object"
 weight: 100
 params:
   source: "https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#align-assignments-to-the-same-object-but-not-to-different-ones"

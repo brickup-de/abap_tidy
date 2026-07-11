@@ -1,5 +1,6 @@
 ---
 title: "Don't add a TEARDOWN unless you really need it"
+linkTitle: "Don't add TEARDOWN needlessly"
 weight: 40
 params:
   source: "https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#dont-add-a-teardown-unless-you-really-need-it"

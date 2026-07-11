@@ -1,5 +1,6 @@
 ---
 title: "Wrap foreign exceptions instead of letting them invade your code"
+linkTitle: "Wrap foreign exceptions"
 weight: 10
 params:
   source: "https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#wrap-foreign-exceptions-instead-of-letting-them-invade-your-code"

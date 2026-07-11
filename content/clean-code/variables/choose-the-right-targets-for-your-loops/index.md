@@ -1,5 +1,6 @@
 ---
 title: "Choose the right targets for your loops"
+linkTitle: "Choose the right loop target"
 weight: 50
 params:
   source: "https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#choose-the-right-targets-for-your-loops"
