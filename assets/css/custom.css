@@ -1,0 +1,6 @@
+/* Hide errors, code may have syntax errors for brevity */
+.highlight .chroma .err,
+.dark .highlight .chroma .err {
+  color: inherit;
+  background: inherit;
+}
