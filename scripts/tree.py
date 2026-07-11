@@ -1,0 +1,187 @@
+"""
+Pure "markdown text in, page tree out" stages for Clean ABAP -> Hugo
+conversion. No filesystem access happens anywhere in this module; see
+scripts/writer.py for the thin adapter that actually writes files.
+
+Three composable stages, run in order by scripts/main.py:
+  parse_tree        markdown text -> Page tree (structure, weight, has_children)
+  resolve_links     rewrites cross-reference links via a CrossReferenceConverter
+  apply_text_fixups rewrites image paths and stale "below" references
+
+They're kept separate because resolve_links is the only stage that needs
+state external to the single file being parsed (a converter built from an
+aggregate, incrementally-grown path mapping across the whole multi-file
+pipeline run -- see scripts/main.py's process_sub_sections loop). parse_tree
+and apply_text_fixups depend on nothing but the file's own text.
+
+Two behaviors are deliberately preserved bug-for-bug from the ContentProcessor
+this module replaces; see scripts/tests/test_tree.py's module docstring for
+the full trace/evidence. In short: weight is only correctly position-based
+for the top two heading levels (deeper headings fall back to a constant),
+and the non-subsection site root's content skips apply_text_fixups entirely.
+"""
+import io
+import os
+import re
+from dataclasses import dataclass, field, replace
+from typing import Iterator, List
+
+from .utils import clean_source_content, extract_heading_text, get_heading_level, github_anchor
+from .crossref import CrossReferenceConverter
+
+
+@dataclass
+class Page:
+    title: str
+    content: str
+    raw_content: str
+    path_parts: List[str]
+    level: int
+    line: int
+    weight: int
+    children: List['Page'] = field(default_factory=list)
+
+    @property
+    def has_children(self) -> bool:
+        return len(self.children) > 0
+
+
+def walk(root: Page) -> Iterator[Page]:
+    """Pre-order walk of a page and all its descendants."""
+    yield root
+    for child in root.children:
+        yield from walk(child)
+
+
+def parse_tree(
+    markdown_text: str,
+    is_subsection: bool = False,
+    base_line: int = 1,
+    subsection_index: int = 0,
+) -> Page:
+    """
+    Parse markdown text into a Page tree.
+
+    Assumes (as every real Clean ABAP source file does) the text starts with
+    exactly one level-1 heading, which becomes the returned root page -- its
+    own path_parts is always [] (the root is never part of the output URL).
+    Every subsequent heading nests under its true parent, regardless of
+    heading level, so a tree-walking writer can reach and write all of them.
+    """
+    lines = clean_source_content(io.StringIO(markdown_text).readlines())
+
+    root: Page = None
+    stack: List[Page] = []
+    content_buffer: List[str] = []
+
+    def flush() -> None:
+        if content_buffer and stack:
+            text = ''.join(content_buffer).strip()
+            stack[-1].content = text
+            stack[-1].raw_content = text
+        content_buffer.clear()
+
+    for i, line in enumerate(lines):
+        line_num = base_line + i + 1
+        heading_level = get_heading_level(line)
+
+        if heading_level is None:
+            content_buffer.append(line)
+            continue
+
+        flush()
+
+        heading_text = extract_heading_text(line)
+        if not heading_text:
+            continue
+
+        while stack and stack[-1].level >= heading_level:
+            stack.pop()
+
+        folder_name = github_anchor(heading_text)
+        path_parts = stack[-1].path_parts + [folder_name] if stack else []
+
+        page = Page(
+            title=heading_text,
+            content='',
+            raw_content='',
+            path_parts=path_parts,
+            level=heading_level,
+            line=line_num,
+            weight=0,
+        )
+
+        if not stack:
+            page.path_parts = []
+            page.weight = 1 if not is_subsection else (subsection_index + 1) * 10
+            root = page
+        else:
+            parent = stack[-1]
+            if is_subsection:
+                base_weight = (subsection_index + 1) * 10
+                page.weight = base_weight if heading_level == 2 else 10
+            else:
+                if heading_level == 2:
+                    page.weight = (len(root.children) + 1) * 10
+                elif heading_level == 3:
+                    page.weight = (len(parent.children) + 1) * 10
+                else:
+                    page.weight = 10
+            parent.children.append(page)
+
+        stack.append(page)
+
+    flush()
+    return root
+
+
+def resolve_links(root: Page, converter: CrossReferenceConverter) -> Page:
+    """Rewrite cross-reference links in every page's content. Returns a new tree."""
+    return replace(
+        root,
+        content=converter.convert_content(root.content),
+        children=[resolve_links(child, converter) for child in root.children],
+    )
+
+
+_IMAGE_PATTERN = re.compile(r'!\[([^\]]*)\]\(([^)]+)\)')
+
+
+def _fix_image_references(content: str) -> str:
+    def fix(match: 're.Match') -> str:
+        alt_text, image_path = match.group(1), match.group(2)
+        if image_path.startswith('http://') or image_path.startswith('https://') or image_path.startswith('/'):
+            return match.group(0)
+        return f"![{alt_text}]({os.path.basename(image_path)})"
+
+    return _IMAGE_PATTERN.sub(fix, content)
+
+
+def _fix_below_references(content: str) -> str:
+    content = re.sub(r'\b(suggestions)\s+below\b', r'\1 on this site', content, flags=re.IGNORECASE)
+    content = re.sub(r'\b(recommendations)\s+below\b', r'\1 on this site', content, flags=re.IGNORECASE)
+    content = re.sub(r'\b(detailed\s+)?rules\s+below\b', r'related rules', content, flags=re.IGNORECASE)
+    return content
+
+
+def apply_text_fixups(root: Page, is_subsection: bool = False) -> Page:
+    """
+    Rewrite image references (to a bare filename) and stale "below"
+    references in every page's content. Returns a new tree.
+
+    The non-subsection site root is exempt -- ContentProcessor generated it
+    via a separate code path that never applied either fixup, only
+    cross-reference conversion (see resolve_links).
+    """
+    def fix(page: Page, is_root: bool) -> Page:
+        content = page.content
+        if not is_root:
+            content = _fix_image_references(content)
+            content = _fix_below_references(content)
+        return replace(
+            page,
+            content=content,
+            children=[fix(child, False) for child in page.children],
+        )
+
+    return fix(root, not is_subsection)

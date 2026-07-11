@@ -11,7 +11,8 @@ from typing import List, Dict, Tuple
 from .utils import kebab_case, ensure_directory
 from .frontmatter import generate_front_matter, get_deep_dives_source_url
 from .crossref import CrossReferenceConverter, build_path_mapping
-from .processor import ContentProcessor
+from .tree import parse_tree, resolve_links, apply_text_fixups, walk
+from .writer import write_tree
 
 
 def get_source_files(base_dir: str) -> Dict[str, str]:
@@ -67,34 +68,32 @@ def process_clean_abap(
     """
     print(f"Processing {main_file}...")
 
-    # Create processor
-    processor = ContentProcessor(
-        base_path=output_dir,
-        source_file=main_file,
-        is_subsection=False
-    )
+    with open(main_file, 'r', encoding='utf-8') as f:
+        markdown_text = f.read()
 
-    # Process the file
-    structure, all_headings = processor.process_file()
+    tree = parse_tree(markdown_text, is_subsection=False)
 
-    # Build path mapping for cross-references
+    # Build path mapping for cross-references. The site root itself is never
+    # part of the mapping -- it isn't addressable via a heading anchor.
     heading_data = []
-    for heading in all_headings:
-        path_parts = heading['path_parts']
-        path = '/' + '/'.join(path_parts)
-        heading_data.append({
-            'text': heading['text'],
-            'path': f"/clean-code{path}/",
-            'level': heading['level']
-        })
+    for child in tree.children:
+        for page in walk(child):
+            path = '/' + '/'.join(page.path_parts)
+            heading_data.append({
+                'text': page.title,
+                'path': f"/clean-code{path}/",
+                'level': page.level
+            })
 
     # Create converter
     converter = CrossReferenceConverter(build_path_mapping(heading_data))
-    
+    tree = resolve_links(tree, converter)
+    tree = apply_text_fixups(tree, is_subsection=False)
+
     # Generate Hugo files
-    file_count = processor.generate_hugo_files(converter)
+    file_count = write_tree(tree, output_dir, source_file=main_file, is_subsection=False)
     print(f"Generated {file_count} files from main content")
-    
+
     return heading_data
 
 
@@ -128,40 +127,34 @@ def process_sub_sections(
         subsection_base = os.path.join(output_dir, 'deep-dives', folder_name)
         ensure_directory(subsection_base)
         
-        # Create processor for this sub-section
-        processor = ContentProcessor(
-            base_path=subsection_base,
-            source_file=file_path,
-            is_subsection=True,
-            subsection_index=i  # Track the position among sub-sections
-        )
-        
-        # Process the file
-        structure, all_headings = processor.process_file()
-        
-        # Extract heading data for cross-references
+        with open(file_path, 'r', encoding='utf-8') as f:
+            markdown_text = f.read()
+
+        tree = parse_tree(markdown_text, is_subsection=True, subsection_index=i)
+
+        # Extract heading data for cross-references. The sub-section's own
+        # root heading (level 1) is written directly into the sub-section's
+        # base_dir (its path_parts is already [] -- see tree.parse_tree), so
+        # it's included here too, unlike the main content's root.
         sub_heading_data = []
-        for heading in all_headings:
-            # Level 1 headings are written directly into the sub-section's
-            # base_dir (see ContentProcessor._generate_heading_file), so
-            # their path_parts (which duplicate the folder name) must not
-            # be appended again here.
-            path_parts = [] if heading['level'] == 1 else heading['path_parts']
-            path = '/' + '/'.join(['deep-dives', folder_name] + path_parts)
+        for page in walk(tree):
+            path = '/' + '/'.join(['deep-dives', folder_name] + page.path_parts)
             sub_heading_data.append({
-                'text': heading['text'],
+                'text': page.title,
                 'path': f"/clean-code{path}/",
-                'level': heading['level']
+                'level': page.level
             })
-        
+
         all_sub_heading_data.extend(sub_heading_data)
-        
+
         # Build path mapping including main content
         all_heading_data = main_heading_data + all_sub_heading_data
         converter = CrossReferenceConverter(build_path_mapping(all_heading_data))
-        
+        tree = resolve_links(tree, converter)
+        tree = apply_text_fixups(tree, is_subsection=True)
+
         # Generate Hugo files
-        file_count = processor.generate_hugo_files(converter)
+        file_count = write_tree(tree, subsection_base, source_file=file_path, is_subsection=True)
         print(f"Generated {file_count} files from {filename}")
     
     return all_sub_heading_data
