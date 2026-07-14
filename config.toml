@@ -46,9 +46,10 @@ path = "github.com/imfing/hextra"
 pagerSize = 10
 
 [params]
-description        = "ABAP resources in a human-friendly format"
-displayUpdatedDate = true
-dateFormat         = "2006-01-02"
+description             = "ABAP resources in a human-friendly format"
+displayUpdatedDate      = true
+dateFormat              = "2006-01-02"
+footer.displayPoweredBy = false
 
 [params.author]
 name = "Tobias Buckdahn"
