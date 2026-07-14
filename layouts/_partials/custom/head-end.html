@@ -1,0 +1,5 @@
+{{ if .IsHome }}
+  {{ with .Site.GetPage "/clean-code" }}
+    <meta http-equiv="refresh" content="0; url={{ .RelPermalink }}">
+  {{ end }}
+{{ end }}
