@@ -1,38 +1,24 @@
 {{- /*
   Override of hextra's components/last-updated.html.
-  Adds the generated page's author, source link and license next to the
-  last-updated line, sourced from page params (source) and the
-  clean-code cascade in config.toml (license, license_url, source_copyright,
-  source_name).
+  Adds licensing related infos and a link with legal details.
 */ -}}
 {{- $lastUpdated := (T "lastUpdated") | default "Last updated on" -}}
 {{- $page := . -}}
 {{- $hasLastmod := and site.Params.displayUpdatedDate .Lastmod -}}
 {{- $source := .Params.source -}}
 {{- $sourceName := .Params.source_name -}}
-{{- $sourceCopyright := .Params.source_copyright -}}
-{{- $license := .Params.license -}}
+{{- $licenseName := .Params.license_name -}}
 {{- $licenseURL := .Params.license_url -}}
 
 {{- if or $hasLastmod $source -}}
   <div class="hx:mt-12 hx:mb-8 hx:block hx:text-xs hx:text-gray-500 hx:ltr:text-right hx:rtl:text-left hx:dark:text-gray-400">
     {{- with $source -}}
-      {{- with $sourceCopyright -}}
-        {{ print "©" . }}
-        <br>
+      {{ print "From " }}<a class="hx:underline hx:decoration-from-font" target="_blank" rel="noopener noreferrer" href="{{ . }}">{{ with $sourceName }}{{ . }}{{ else }}GitHub{{ end }}</a>
+      {{- with $licenseName -}}
+        {{ print " under " }}<a class="hx:underline hx:decoration-from-font" target="_blank" rel="noopener noreferrer" href="{{ $licenseURL }}">{{ . }}</a>
       {{- end -}}
-      {{- $sourceURL := . -}}
-      {{ print "Source " }}<a class="hx:underline hx:decoration-from-font" target="_blank" rel="noopener noreferrer" href="{{ $sourceURL }}">{{ with $sourceName }}{{ . }}{{ else }}GitHub{{ end }}</a>
-      {{- with $license -}}
-        {{ print " licensed under " }}{{- if $licenseURL -}}
-          <a class="hx:underline hx:decoration-from-font" target="_blank" rel="noopener noreferrer" href="{{ $licenseURL }}">{{ $license }}</a>
-        {{- else -}}
-          {{ $license }}
-        {{- end -}}
-      {{- end -}}
+      {{ print " — " }}<a class="hx:underline hx:decoration-from-font" href="{{ "/legal" | relURL }}">more details</a>
     {{- end -}}
-    <br>
-    Adapted for visual pleasing presentation
     {{- if $hasLastmod -}}
       <br>
       {{- $datetime := (time.Format "2006-01-02T15:04:05.000Z" .Lastmod) -}}

@@ -6,10 +6,9 @@ enableGitInfo = true
 [[cascade]]
 type = "docs"
 [cascade.params]
-license          = "CC BY 3.0"
-license_url      = "https://creativecommons.org/licenses/by/3.0/"
-source_copyright = "2019-2021 SAP SE or an SAP affiliate company and styleguides contributors"
-source_name      = "SAP/styleguides"
+license_name = "CC BY 3.0"
+license_url  = "https://creativecommons.org/licenses/by/3.0/"
+source_name  = "SAP/styleguides"
 [cascade._target]
 path = "{/clean-code,/clean-code/**}"
 
