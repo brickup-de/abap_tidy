@@ -166,6 +166,40 @@ def _fix_below_references(content: str) -> str:
     return content
 
 
+def _flatten_field(root: Page, field: str) -> str:
+    parts = []
+    for page in walk(root):
+        value = getattr(page, field)
+        if page is root:
+            if value:
+                parts.append(value)
+            continue
+        heading = f"{'#' * page.level} {page.title}"
+        parts.append(f"{heading}\n\n{value}" if value else heading)
+    return '\n\n'.join(parts)
+
+
+def flatten_to_single_page(root: Page) -> Page:
+    """
+    Collapse an entire sub-section tree into one leaf Page, reconstructing
+    every descendant heading as literal markdown ('#' * level) in original
+    document order (walk() already yields exactly that order -- see its
+    docstring). Used for dives configured to render as one page instead of
+    being split per heading (see data/mapping.toml's [files].keep).
+
+    content and raw_content are flattened independently since they can
+    diverge after apply_text_fixups (which rewrites .content's image paths
+    to a bare filename but leaves .raw_content as the original source text
+    that _copy_images_for_content needs to find the file on disk).
+    """
+    return replace(
+        root,
+        content=_flatten_field(root, 'content'),
+        raw_content=_flatten_field(root, 'raw_content'),
+        children=[],
+    )
+
+
 def apply_text_fixups(root: Page, is_subsection: bool = False) -> Page:
     """
     Rewrite image references (to a bare filename) and stale "below"

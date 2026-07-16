@@ -94,8 +94,12 @@ def is_breadcrumb_line(line: str) -> bool:
     """
     Check if a line is a breadcrumb navigation line.
     Pattern: > [Clean ABAP](#clean-abap) > [Content](#content) > ...
+    Sub-sections (e.g. Enumerations.md) have their own internal breadcrumbs
+    that start with the section's own name instead of "Clean ABAP", e.g.
+    > [Enumerations](#enumerations) > [This section](#native-enumerations)
+    so this matches on the repeated "] > [" shape rather than a fixed label.
     """
-    return bool(re.match(r'^>\s*\[Clean ABAP\]', line))
+    return bool(re.match(r'^>\s*\[[^\]]+\]\([^)]+\)(\s*>\s*\[[^\]]+\]\([^)]+\))+\s*$', line))
 
 
 def is_language_nav_block(lines: List[str], start_idx: int) -> bool:
@@ -371,3 +375,29 @@ def load_link_titles(repo_root: str) -> Dict[str, str]:
     with open(path, 'rb') as f:
         data = tomllib.load(f)
     return data.get('linktitles', {})
+
+
+def load_file_config(repo_root: str) -> Dict[str, List[str]]:
+    """
+    Load data/mapping.toml's [files] table: which Clean ABAP source files to
+    process and how -- 'chapterize' (split into one Hugo page per heading,
+    the original behavior) vs 'keep' (render as a single page). Paths are
+    relative to assets/sources/sap-styleguides/clean-abap/.
+
+    Unlike load_link_titles, this is required -- it's the sole source of
+    truth for which source files exist (see scripts/main.py's
+    get_source_files), so a missing mapping.toml or a missing [files] table
+    raises rather than silently falling back to an empty config.
+    """
+    path = os.path.join(repo_root, 'data', 'mapping.toml')
+    if not os.path.exists(path):
+        raise ValueError(f"{path} does not exist, but is required for [files]")
+    with open(path, 'rb') as f:
+        data = tomllib.load(f)
+    files = data.get('files')
+    if files is None:
+        raise ValueError(f"{path} is missing the required [files] table")
+    return {
+        'chapterize': list(files.get('chapterize', [])),
+        'keep': list(files.get('keep', [])),
+    }

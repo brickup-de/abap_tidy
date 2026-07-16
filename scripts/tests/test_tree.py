@@ -38,7 +38,7 @@ actually gets written -- see the level 4/5 headings test below).
 """
 import unittest
 
-from scripts.tree import Page, apply_text_fixups, parse_tree, resolve_links, walk
+from scripts.tree import Page, apply_text_fixups, flatten_to_single_page, parse_tree, resolve_links, walk
 from scripts.crossref import CrossReferenceConverter
 
 
@@ -237,6 +237,59 @@ class ResolveLinksTests(unittest.TestCase):
         resolve_links(root, converter)
 
         self.assertEqual(root.content, original_content)
+
+
+class FlattenToSinglePageTests(unittest.TestCase):
+    def test_reconstructs_headings_and_content_in_document_order(self):
+        root = parse_tree(SUBSECTION_CONTENT, is_subsection=True, subsection_index=2)
+
+        flattened = flatten_to_single_page(root)
+
+        self.assertEqual(
+            flattened.content,
+            "Deep dive intro.\n\n"
+            "## Section One\n\nSection one content.\n\n"
+            "## Section Two\n\nSection two content.\n\n"
+            "### Section Two Sub\n\nSub content."
+        )
+
+    def test_result_is_a_leaf_preserving_root_identity_fields(self):
+        root = parse_tree(SUBSECTION_CONTENT, is_subsection=True, subsection_index=2)
+
+        flattened = flatten_to_single_page(root)
+
+        self.assertEqual(flattened.children, [])
+        self.assertEqual(flattened.title, "Deep Dive Title")
+        self.assertEqual(flattened.level, 1)
+        self.assertEqual(flattened.weight, root.weight)
+
+    def test_flattens_content_and_raw_content_independently(self):
+        # apply_text_fixups only ever rewrites .content, leaving .raw_content
+        # as the original source text (see writer.py's _copy_images_for_content,
+        # which needs the original relative image path to find the file on
+        # disk). Flattening must keep that same split for the combined page.
+        child = Page(
+            title="Child", content="CHILD_FIXED", raw_content="CHILD_RAW",
+            path_parts=["child"], level=2, line=5, weight=10, children=[],
+        )
+        root = Page(
+            title="Root", content="ROOT_FIXED", raw_content="ROOT_RAW",
+            path_parts=[], level=1, line=1, weight=10, children=[child],
+        )
+
+        flattened = flatten_to_single_page(root)
+
+        self.assertEqual(flattened.content, "ROOT_FIXED\n\n## Child\n\nCHILD_FIXED")
+        self.assertEqual(flattened.raw_content, "ROOT_RAW\n\n## Child\n\nCHILD_RAW")
+
+    def test_does_not_mutate_the_input_tree(self):
+        root = parse_tree(SUBSECTION_CONTENT, is_subsection=True, subsection_index=0)
+        original_children_count = len(root.children)
+
+        flatten_to_single_page(root)
+
+        self.assertEqual(len(root.children), original_children_count)
+        self.assertNotEqual(root.content, "Deep dive intro.\n\n## Section One\n\nSection one content.")
 
 
 class ApplyTextFixupsTests(unittest.TestCase):

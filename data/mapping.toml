@@ -1,3 +1,24 @@
+[files]
+# Which Clean ABAP source files get processed, and how. Paths are relative
+# to assets/sources/sap-styleguides/clean-abap/. "chapterize" splits a file
+# into one Hugo page per heading (the original behavior); "keep" renders
+# the whole file as a single page instead. This is the sole source of
+# truth for which source files exist -- every .md file in sub-sections/
+# must be listed under exactly one of these, and every listed path must
+# exist, or scripts/main.py's get_source_files fails loudly.
+chapterize = [
+  "CleanABAP.md",
+  "sub-sections/ModernABAPLanguageElements.md",
+]
+keep = [
+  "sub-sections/AvoidEncodings.md",
+  "sub-sections/Enumerations.md",
+  "sub-sections/Exceptions.md",
+  "sub-sections/FunctionGroupsVsClasses.md",
+  "sub-sections/InterfacesVsAbstractClasses.md",
+  "sub-sections/UpperVsLowerCase.md",
+]
+
 [linktitles]
 "booleans" = "Booleans"
 "booleans/use-abap_bool-for-booleans" = "Use ABAP_BOOL"
@@ -57,52 +78,12 @@
 "deep-dives" = "Deep Dives"
 
 "deep-dives/avoid-encodings" = "Avoid Encodings"
-"deep-dives/avoid-encodings/abstract" = "Abstract"
-"deep-dives/avoid-encodings/arguments" = "Arguments"
-"deep-dives/avoid-encodings/avoiding-name-clashes" = "Avoiding name clashes"
-"deep-dives/avoid-encodings/compromises" = "Compromises"
-"deep-dives/avoid-encodings/reasoning" = "Reasoning"
-
 "deep-dives/enumerations" = "Enumerations"
-"deep-dives/enumerations/guidelines" = "Guidelines"
-"deep-dives/enumerations/guidelines/prefer-classes-to-interfaces" = "Prefer classes to interfaces"
-"deep-dives/enumerations/guidelines/try-to-enforce-type-safety" = "Try to enforce type safety"
-"deep-dives/enumerations/guidelines/use-one-development-object-per-enumeration" = "Use one development object per enumeration"
-
-"deep-dives/enumerations/native-enumerations" = "Native"
-"deep-dives/enumerations/native-enumerations/compatibility" = "Compatibility"
-
-"deep-dives/enumerations/patterns" = "Patterns"
-"deep-dives/enumerations/patterns/collection-pattern" = "Collection"
-"deep-dives/enumerations/patterns/constant-pattern" = "Constant"
-"deep-dives/enumerations/patterns/interface-pattern" = "Interface"
-"deep-dives/enumerations/patterns/object-pattern" = "Object"
-
 "deep-dives/exceptions" = "Exceptions"
-"deep-dives/exceptions/compromises" = "Compromises"
-"deep-dives/exceptions/the-ideal" = "The Ideal"
-"deep-dives/exceptions/whats-in-the-way" = "What's in the Way"
-"deep-dives/exceptions/whats-in-the-way/why-cx_dynamic_check-doesnt-help" = "Why CX_DYNAMIC_CHECK Doesn't Help"
-"deep-dives/exceptions/whats-in-the-way/why-cx_no_check-doesnt-help" = "Why CX_NO_CHECK Doesn't Help"
-"deep-dives/exceptions/whats-in-the-way/why-cx_static_check-doesnt-help" = "Why CX_STATIC_CHECK Doesn't Help"
-"deep-dives/exceptions/whats-in-the-way/why-cx_sy_no_handler-doesnt-help" = "Why CX_SY_NO_HANDLER Doesn't Help"
-
 "deep-dives/function-groups-vs-classes" = "Function Groups vs. Classes"
-"deep-dives/function-groups-vs-classes/no-inheritance" = "No inheritance"
-"deep-dives/function-groups-vs-classes/no-instantiation" = "No instantiation"
-"deep-dives/function-groups-vs-classes/no-interfaces" = "No interfaces"
-"deep-dives/function-groups-vs-classes/no-method-encapsulation" = "No method encapsulation"
-"deep-dives/function-groups-vs-classes/no-overloading" = "No overloading"
-"deep-dives/function-groups-vs-classes/weak-substitution" = "Weak substitution"
-"deep-dives/function-groups-vs-classes/weak-variable-encapsulation" = "Weak variable encapsulation"
-
 "deep-dives/interfaces-vs-abstract-classes" = "Interfaces vs. Abstract Classes"
-"deep-dives/interfaces-vs-abstract-classes/abstract-classes" = "Abstract classes"
-"deep-dives/interfaces-vs-abstract-classes/combination" = "Combination"
-"deep-dives/interfaces-vs-abstract-classes/comparison" = "Comparison"
-"deep-dives/interfaces-vs-abstract-classes/interfaces" = "Interfaces"
 
-"deep-dives/modern-abap-language-elements" = "Modern ABAP Language Elements"
+"deep-dives/modern-abap-language-elements" = "Modern ABAP"
 "deep-dives/modern-abap-language-elements/character-handling" = "Character Handling"
 "deep-dives/modern-abap-language-elements/character-handling/lower-and-upper-case-conversion" = "Lower and upper case conversion"
 "deep-dives/modern-abap-language-elements/compound-assignment-operators" = "Compound Assignment Operators"
@@ -352,11 +333,7 @@
 "deep-dives" = "beaker"
 "deep-dives/avoid-encodings" = "hashtag"
 "deep-dives/enumerations" = "collection"
-"deep-dives/enumerations/guidelines" = "clipboard-list"
-"deep-dives/enumerations/native-enumerations" = "chip"
-"deep-dives/enumerations/patterns" = "puzzle"
 "deep-dives/exceptions" = "exclamation"
-"deep-dives/exceptions/whats-in-the-way" = "ban"
 "deep-dives/function-groups-vs-classes" = "cube"
 "deep-dives/interfaces-vs-abstract-classes" = "cube-transparent"
 "deep-dives/modern-abap-language-elements" = "sparkles"
