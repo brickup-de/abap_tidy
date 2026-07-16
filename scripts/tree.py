@@ -166,6 +166,36 @@ def _fix_below_references(content: str) -> str:
     return content
 
 
+_SHORTHAND_LONGHAND_TABLE_PATTERN = re.compile(
+    r'^Shorthand\s*\|\s*Longhand\s*\|?[ \t]*\n'
+    r'-+\s*\|\s*-+\s*\|?[ \t]*\n'
+    r'((?:.*\|.*\n?)+)',
+    re.MULTILINE,
+)
+
+
+def _fix_shorthand_longhand_tables(content: str) -> str:
+    """
+    Rewrite a "Shorthand | Longhand" source table into a fenced ABAP code block
+    with a trailing " short/long comment on each line -- easier to compare and
+    enables syntax highlighting.
+    """
+    def unescape(cell: str) -> str:
+        return cell.strip().replace('\\`', '`')
+
+    def fix(match: 're.Match') -> str:
+        lines = []
+        for row in match.group(1).strip('\n').split('\n'):
+            short, long_form = (unescape(cell) for cell in row.strip().strip('|').split('|'))
+            lines.append(f'{short} " short')
+            lines.append(f'{long_form} " long')
+            lines.append('')
+        body = '\n'.join(lines).rstrip('\n')
+        return f"```ABAP\n{body}\n```"
+
+    return _SHORTHAND_LONGHAND_TABLE_PATTERN.sub(fix, content)
+
+
 def _flatten_field(root: Page, field: str) -> str:
     parts = []
     for page in walk(root):
@@ -214,6 +244,7 @@ def apply_text_fixups(root: Page, is_subsection: bool = False) -> Page:
         if not is_root:
             content = _fix_image_references(content)
             content = _fix_below_references(content)
+            content = _fix_shorthand_longhand_tables(content)
         return replace(
             page,
             content=content,

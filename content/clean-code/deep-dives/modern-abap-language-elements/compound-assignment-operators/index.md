@@ -9,10 +9,19 @@ SAP NetWeaver 7.54 introduces shorthand versions
 for arithmetic assignments and string concatenation.
 These assignments also allow expressions in the operand position.
 
-Shorthand | Longhand  |
----|---|
-x += 1.  | x = x + 1.  |
-x -= 1.  | x = x - 1.  |
-x *= 1.  | x = x * 1.  |
-x /= 1.  | x = x / 1.  |
-x &&= \`abc\`. | x = x && \`abc\`. |
+```ABAP
+x += 1. " short
+x = x + 1. " long
+
+x -= 1. " short
+x = x - 1. " long
+
+x *= 1. " short
+x = x * 1. " long
+
+x /= 1. " short
+x = x / 1. " long
+
+x &&= `abc`. " short
+x = x && `abc`. " long
+```

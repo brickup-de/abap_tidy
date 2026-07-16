@@ -340,6 +340,29 @@ class ApplyTextFixupsTests(unittest.TestCase):
 
         self.assertEqual(find(root, "Chapter").content, original)
 
+    def test_fixes_shorthand_longhand_table(self):
+        text = (
+            "# Title\n\n## Chapter\n\n"
+            "Shorthand | Longhand  |\n"
+            "---|---|\n"
+            "x += 1.  | x = x + 1.  |\n"
+            "x &&= \\`abc\\`. | x = x && \\`abc\\`. |\n"
+        )
+        root = parse_tree(text, is_subsection=False)
+
+        fixed = apply_text_fixups(root, is_subsection=False)
+
+        self.assertEqual(
+            find(fixed, "Chapter").content,
+            "```ABAP\n"
+            "x += 1. \" short\n"
+            "x = x + 1. \" long\n"
+            "\n"
+            "x &&= `abc`. \" short\n"
+            "x = x && `abc`. \" long\n"
+            "```"
+        )
+
 
 if __name__ == '__main__':
     unittest.main()
