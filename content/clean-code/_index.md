@@ -2,7 +2,7 @@
 title: "Clean ABAP"
 weight: 1
 params:
-  source: "https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#L1"
+  source: "https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#clean-abap"
 ---
 
 This guide is an adoption of

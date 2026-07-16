@@ -113,4 +113,4 @@ def get_root_source_url() -> str:
     """
     Get source URL for the root clean-code page.
     """
-    return "https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#L1"
+    return "https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#clean-abap"

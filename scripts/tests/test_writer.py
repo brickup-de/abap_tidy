@@ -65,7 +65,7 @@ class WriteTreeNonSubsectionTests(unittest.TestCase):
         self.assertIn('title: "Site Title"', text)
         self.assertIn('weight: 1', text)
         self.assertIn(
-            'source: "https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#L1"',
+            'source: "https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#clean-abap',
             text,
         )
         self.assertIn("Intro.", text)
