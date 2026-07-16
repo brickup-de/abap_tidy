@@ -54,7 +54,7 @@ def write_tree(
 
 
 def _write_root_page(root: Page, base_path: str) -> int:
-    front_matter = generate_front_matter(title=root.title, weight=1, source=get_root_source_url())
+    front_matter = generate_front_matter(title=root.title, weight=1, source=get_root_source_url(), sidebar_hide=True)
     content = front_matter
     if root.content:
         content += f"\n{root.content}\n"

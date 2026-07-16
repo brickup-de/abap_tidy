@@ -1,6 +1,8 @@
 ---
 title: "Clean ABAP"
 weight: 1
+sidebar:
+  hide: true
 params:
   source: "https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#clean-abap"
 ---

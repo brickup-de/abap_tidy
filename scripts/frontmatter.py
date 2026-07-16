@@ -30,7 +30,8 @@ def generate_front_matter(
     title: str,
     weight: int,
     source: str,
-    link_title: Optional[str] = None
+    link_title: Optional[str] = None,
+    sidebar_hide: bool = False
 ) -> str:
     """
     Generate Hugo front matter in YAML format.
@@ -47,6 +48,8 @@ def generate_front_matter(
             (Hugo's native linkTitle field, already preferred over title by
             the theme's utils/title partial). Omitted from the output
             entirely when None, so most pages carry no redundant field.
+        sidebar_hide: When True, emits `sidebar: hide: true` to hide this
+            page's own entry from the sidebar (its children still show).
 
     Returns:
         YAML front matter string
@@ -55,6 +58,9 @@ def generate_front_matter(
     if link_title:
         lines.append(f'linkTitle: "{escape_yaml_string(link_title)}"')
     lines.append(f'weight: {weight}')
+    if sidebar_hide:
+        lines.append('sidebar:')
+        lines.append('  hide: true')
     lines.append('params:')
     lines.append(f'  source: "{source}"')
     lines.append('---')

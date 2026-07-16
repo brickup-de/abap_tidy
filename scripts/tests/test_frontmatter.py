@@ -38,5 +38,20 @@ class GenerateFrontMatterLinkTitleTests(unittest.TestCase):
         self.assertIn('linkTitle: "Say \\"Hi\\""', front_matter)
 
 
+class GenerateFrontMatterSidebarHideTests(unittest.TestCase):
+    def test_omits_sidebar_block_by_default(self):
+        front_matter = generate_front_matter(title="Some Page", weight=10, source="https://example.com")
+
+        self.assertNotIn('sidebar:', front_matter)
+
+    def test_includes_sidebar_hide_block_when_requested(self):
+        front_matter = generate_front_matter(
+            title="Some Page", weight=10, source="https://example.com",
+            sidebar_hide=True,
+        )
+
+        self.assertIn('sidebar:\n  hide: true\n', front_matter)
+
+
 if __name__ == '__main__':
     unittest.main()

@@ -22,7 +22,7 @@ keep = [
 [linktitles]
 "booleans" = "Booleans"
 "booleans/use-abap_bool-for-booleans" = "Use ABAP_BOOL"
-"booleans/use-abap_true-and-abap_false-for-comparisons" = "Compare with ABAP_TRUE/ABAP_FALSE"
+"booleans/use-abap_true-and-abap_false-for-comparisons" = "Use ABAP_TRUE/FALSE"
 "booleans/use-booleans-wisely" = "Use wisely"
 "booleans/use-xsdbool-to-set-boolean-variables" = "Set using XSDBOOL"
 
