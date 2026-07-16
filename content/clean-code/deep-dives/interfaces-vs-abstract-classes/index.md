@@ -54,7 +54,21 @@ CLASS /clean/markdown_blog_post IMPLEMENTATION.
 ENDCLASS.
 ```
 
-![](InterfacesVsAbstractClasses-Interface.png)
+```mermaid
+---
+  config:
+    look: handDrawn
+    class:
+      hideEmptyMembersBox: true
+---
+classDiagram
+    class BlogPost {
+        <<Interface>>
+    }
+    Consumer -- BlogPost
+    BlogPost <|.. MarkdownBlogPost
+    BlogPost <|.. HTMLBlogPost
+```
 
 > **Class diagram.**
 The `BlogPost` interface has two alternative
@@ -109,7 +123,19 @@ CLASS /clean/markdown_blog_post IMPLEMENTATION.
 ENDCLASS.
 ```
 
-![](InterfacesVsAbstractClasses-AbstractClass.png)
+```mermaid
+---
+  config:
+    look: handDrawn
+    class:
+      hideEmptyMembersBox: true
+---
+classDiagram
+    class BlogPost:::italic
+    Consumer -- BlogPost
+    BlogPost <|-- MarkdownBlogPost
+    BlogPost <|-- HTMLBlogPost
+```
 
 > **Class diagram.**
 The abstract class `BlogPost` has two sub-classes
@@ -188,7 +214,23 @@ CLASS /clean/formatted_blog_post IMPLEMENTATION.
 ENDCLASS.
 ```
 
-![](InterfacesVsAbstractClasses-Combined.png)
+```mermaid
+---
+  config:
+    look: handDrawn
+    class:
+      hideEmptyMembersBox: true
+---
+classDiagram
+    class BlogPost {
+        <<Interface>>
+    }
+    class FormattedBlogPost:::italic
+    Consumer -- BlogPost
+    BlogPost <|.. FormattedBlogPost
+    FormattedBlogPost <|-- MarkdownBlogPost
+    FormattedBlogPost <|-- HTMLBlogPost
+```
 
 > **Class diagram.**
 The interface `BlogPost` specifies the "contract"

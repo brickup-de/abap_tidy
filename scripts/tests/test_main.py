@@ -41,13 +41,15 @@ def write_file(path, content):
         f.write(content)
 
 
-def write_mapping_toml(repo_root, chapterize, keep):
+def write_mapping_toml(repo_root, chapterize, keep, diagrams=None):
     chapterize_list = ', '.join(f'"{p}"' for p in chapterize)
     keep_list = ', '.join(f'"{p}"' for p in keep)
-    write_file(
-        os.path.join(repo_root, 'data', 'mapping.toml'),
-        f'[files]\nchapterize = [{chapterize_list}]\nkeep = [{keep_list}]\n',
-    )
+    text = f'[files]\nchapterize = [{chapterize_list}]\nkeep = [{keep_list}]\n'
+    if diagrams:
+        text += '\n[diagrams]\n'
+        for filename, block in diagrams.items():
+            text += f"\"{filename}\" = '''\n{block}'''\n"
+    write_file(os.path.join(repo_root, 'data', 'mapping.toml'), text)
 
 
 class GetSourceFilesTests(unittest.TestCase):
@@ -181,7 +183,7 @@ class ParseSubSectionsTests(unittest.TestCase):
         ])
 
 
-def run_conversion_for_test(main_content, sub_sections, keep=()):
+def run_conversion_for_test(main_content, sub_sections, keep=(), diagrams=None):
     with tempfile.TemporaryDirectory() as repo_root, tempfile.TemporaryDirectory() as output_dir:
         clean_abap_dir = os.path.join(repo_root, 'assets', 'sources', 'sap-styleguides', 'clean-abap')
         write_file(os.path.join(clean_abap_dir, 'CleanABAP.md'), main_content)
@@ -191,6 +193,7 @@ def run_conversion_for_test(main_content, sub_sections, keep=()):
             repo_root,
             chapterize=['CleanABAP.md'] + [f'sub-sections/{f}' for f in sub_sections if f not in keep],
             keep=[f'sub-sections/{f}' for f in keep],
+            diagrams=diagrams,
         )
 
         run_conversion(repo_root, output_dir)
@@ -302,6 +305,35 @@ class RunConversionKeepModeTests(unittest.TestCase):
         generated = run_conversion_for_test(main_content, sub_sections, keep=("AvoidEncodings.md",))
 
         self.assertIn(os.path.join('deep-dives', 'exceptions', 'the-ideal', 'index.md'), generated)
+
+
+class RunConversionDiagramOverrideTests(unittest.TestCase):
+    def test_image_matching_a_diagrams_override_is_replaced_and_the_png_is_not_copied(self):
+        main_content = "# Clean ABAP\n\n## Names\n\nUse descriptive names.\n"
+        sub_section_content = "# Some Dive\n\nIntro.\n\n![](some-dive/Foo.png)\n\nMore text.\n"
+        diagram_block = "```mermaid\nclassDiagram\n    A --> B\n```"
+
+        with tempfile.TemporaryDirectory() as repo_root, tempfile.TemporaryDirectory() as output_dir:
+            clean_abap_dir = os.path.join(repo_root, 'assets', 'sources', 'sap-styleguides', 'clean-abap')
+            write_file(os.path.join(clean_abap_dir, 'CleanABAP.md'), main_content)
+            write_file(os.path.join(clean_abap_dir, 'sub-sections', 'SomeDive.md'), sub_section_content)
+            os.makedirs(os.path.join(clean_abap_dir, 'sub-sections', 'some-dive'))
+            with open(os.path.join(clean_abap_dir, 'sub-sections', 'some-dive', 'Foo.png'), 'wb') as f:
+                f.write(b'fake-image-bytes')
+            write_mapping_toml(
+                repo_root, chapterize=['CleanABAP.md'], keep=['sub-sections/SomeDive.md'],
+                diagrams={'Foo.png': diagram_block},
+            )
+
+            run_conversion(repo_root, output_dir)
+
+            dive_index = os.path.join(output_dir, 'deep-dives', 'some-dive', 'index.md')
+            with open(dive_index, encoding='utf-8') as f:
+                content = f.read()
+
+        self.assertIn(diagram_block, content)
+        self.assertNotIn('Foo.png', content)
+        self.assertFalse(os.path.isfile(os.path.join(output_dir, 'deep-dives', 'some-dive', 'Foo.png')))
 
 
 class ValidateCrossReferencesTests(unittest.TestCase):

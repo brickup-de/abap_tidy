@@ -6,9 +6,9 @@ import os
 import re
 import sys
 import shutil
-from typing import Dict, List, Set, Tuple
+from typing import Dict, List, Optional, Set, Tuple
 
-from .utils import kebab_case, ensure_directory, github_anchor, load_file_config, load_link_titles
+from .utils import kebab_case, ensure_directory, github_anchor, load_diagram_overrides, load_file_config, load_link_titles
 from .frontmatter import generate_front_matter, get_deep_dives_source_url
 from .crossref import CrossReferenceConverter, build_path_mapping
 from .tree import Page, flatten_to_single_page, parse_tree, resolve_links, apply_text_fixups, walk
@@ -189,11 +189,12 @@ def write_main(
     own_heading_data: List[Dict],
     all_heading_data: List[Dict],
     link_titles: Dict[str, str],
+    diagrams: Optional[Dict[str, str]] = None,
 ) -> None:
     """Resolve links and fixups against the full cross-file mapping, then write the main content."""
     converter = _converter_for(own_heading_data, all_heading_data)
     tree = resolve_links(tree, converter)
-    tree = apply_text_fixups(tree, is_subsection=False)
+    tree = apply_text_fixups(tree, is_subsection=False, diagrams=diagrams)
 
     file_count = write_tree(tree, output_dir, source_file=main_file, is_subsection=False, link_titles=link_titles)
     print(f"Generated {file_count} files from main content")
@@ -208,6 +209,7 @@ def write_sub_section(
     all_heading_data: List[Dict],
     link_titles: Dict[str, str],
     keep: bool = False,
+    diagrams: Optional[Dict[str, str]] = None,
 ) -> None:
     """
     Resolve links and fixups against the full cross-file mapping, then write
@@ -222,7 +224,7 @@ def write_sub_section(
 
     converter = _converter_for(own_heading_data, all_heading_data)
     tree = resolve_links(tree, converter)
-    tree = apply_text_fixups(tree, is_subsection=True)
+    tree = apply_text_fixups(tree, is_subsection=True, diagrams=diagrams)
     if keep:
         tree = flatten_to_single_page(tree)
 
@@ -266,12 +268,13 @@ def run_conversion(repo_root: str, output_dir: str) -> None:
         all_heading_data.extend(heading_data)
 
     link_titles = load_link_titles(repo_root)
+    diagrams = load_diagram_overrides(repo_root)
 
-    write_main(main_tree, output_dir, source_files['main'], main_heading_data, all_heading_data, link_titles)
+    write_main(main_tree, output_dir, source_files['main'], main_heading_data, all_heading_data, link_titles, diagrams)
     for file_path, folder_name, tree, heading_data in sub_sections:
         write_sub_section(
             file_path, folder_name, tree, output_dir, heading_data, all_heading_data, link_titles,
-            keep=file_path in keep_files,
+            keep=file_path in keep_files, diagrams=diagrams,
         )
 
     # Create the deep-dives/_index.md file

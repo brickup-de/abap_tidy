@@ -9,3 +9,12 @@
 .dark .shiki span {
   color: var(--shiki-dark);
 }
+
+/* Mermaid diagram styling */
+.mermaid svg {
+  margin: 0 auto;
+} 
+
+.mermaid .italic {
+  font-style: italic;
+}

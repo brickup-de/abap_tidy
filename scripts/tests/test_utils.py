@@ -1,11 +1,12 @@
 """
-Tests for scripts/utils.py's load_link_titles and load_file_config.
+Tests for scripts/utils.py's load_link_titles, load_file_config, and
+load_diagram_overrides.
 """
 import os
 import tempfile
 import unittest
 
-from scripts.utils import load_file_config, load_link_titles, remove_breadcrumb_lines
+from scripts.utils import load_diagram_overrides, load_file_config, load_link_titles, remove_breadcrumb_lines
 
 
 def write_mapping_toml(repo_root, text):
@@ -59,6 +60,35 @@ class LoadFileConfigTests(unittest.TestCase):
 
             with self.assertRaises(ValueError):
                 load_file_config(repo_root)
+
+
+class LoadDiagramOverridesTests(unittest.TestCase):
+    def test_returns_empty_dict_when_mapping_file_does_not_exist(self):
+        with tempfile.TemporaryDirectory() as repo_root:
+            self.assertEqual(load_diagram_overrides(repo_root), {})
+
+    def test_returns_empty_dict_when_diagrams_table_is_missing(self):
+        with tempfile.TemporaryDirectory() as repo_root:
+            write_mapping_toml(repo_root, '[linktitles]\n"chapter" = "Chapter"\n')
+
+            self.assertEqual(load_diagram_overrides(repo_root), {})
+
+    def test_reads_the_diagrams_table_from_data_mapping_toml(self):
+        with tempfile.TemporaryDirectory() as repo_root:
+            write_mapping_toml(
+                repo_root,
+                "[diagrams]\n"
+                '"Foo.png" = \'\'\'\n'
+                "```mermaid\n"
+                "classDiagram\n"
+                "    A --> B\n"
+                "```\'\'\'\n",
+            )
+
+            self.assertEqual(
+                load_diagram_overrides(repo_root),
+                {"Foo.png": "```mermaid\nclassDiagram\n    A --> B\n```"},
+            )
 
 
 class RemoveBreadcrumbLinesTests(unittest.TestCase):

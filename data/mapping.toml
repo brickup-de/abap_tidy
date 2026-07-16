@@ -1,11 +1,5 @@
 [files]
-# Which Clean ABAP source files get processed, and how. Paths are relative
-# to assets/sources/sap-styleguides/clean-abap/. "chapterize" splits a file
-# into one Hugo page per heading (the original behavior); "keep" renders
-# the whole file as a single page instead. This is the sole source of
-# truth for which source files exist -- every .md file in sub-sections/
-# must be listed under exactly one of these, and every listed path must
-# exist, or scripts/main.py's get_source_files fails loudly.
+# Which Clean ABAP source files get processed, and how
 chapterize = [
   "CleanABAP.md",
   "sub-sections/ModernABAPLanguageElements.md",
@@ -19,7 +13,59 @@ keep = [
   "sub-sections/UpperVsLowerCase.md",
 ]
 
+[diagrams]
+# Overrides that replace a source image with a hand-written mermaid diagram
+"InterfacesVsAbstractClasses-Interface.png" = '''
+```mermaid
+---
+  config:
+    look: handDrawn
+    class:
+      hideEmptyMembersBox: true
+---
+classDiagram
+    class BlogPost {
+        <<Interface>>
+    }
+    Consumer -- BlogPost
+    BlogPost <|.. MarkdownBlogPost
+    BlogPost <|.. HTMLBlogPost
+```'''
+"InterfacesVsAbstractClasses-AbstractClass.png" = '''
+```mermaid
+---
+  config:
+    look: handDrawn
+    class:
+      hideEmptyMembersBox: true
+---
+classDiagram
+    class BlogPost:::italic
+    Consumer -- BlogPost
+    BlogPost <|-- MarkdownBlogPost
+    BlogPost <|-- HTMLBlogPost
+```'''
+"InterfacesVsAbstractClasses-Combined.png" = '''
+```mermaid
+---
+  config:
+    look: handDrawn
+    class:
+      hideEmptyMembersBox: true
+---
+classDiagram
+    class BlogPost {
+        <<Interface>>
+    }
+    class FormattedBlogPost:::italic
+    Consumer -- BlogPost
+    BlogPost <|.. FormattedBlogPost
+    FormattedBlogPost <|-- MarkdownBlogPost
+    FormattedBlogPost <|-- HTMLBlogPost
+```'''
+
 [linktitles]
+# Shortened link titles for breadcrumbs, sidebar and card layout
 "booleans" = "Booleans"
 "booleans/use-abap_bool-for-booleans" = "Use ABAP_BOOL"
 "booleans/use-abap_true-and-abap_false-for-comparisons" = "Use ABAP_TRUE/FALSE"
@@ -320,8 +366,7 @@ keep = [
 "variables/prefer-inline-to-up-front-declarations" = "Prefer inline declaration"
 
 [section-icons]
-# Icon names must exist in _vendor/github.com/imfing/hextra/data/icons.yaml.
-# Keys are section paths relative to content/clean-code, same scheme as [linktitles]. Root excluded.
+# Icons displayed on links inside of card layouts
 "booleans" = "check-circle"
 "classes" = "cube"
 "classes/classes-object-orientation" = "view-grid"

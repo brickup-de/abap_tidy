@@ -340,6 +340,58 @@ class ApplyTextFixupsTests(unittest.TestCase):
 
         self.assertEqual(find(root, "Chapter").content, original)
 
+    def test_image_matching_a_diagrams_override_is_replaced_with_the_stored_block(self):
+        text = "# Title\n\n## Chapter\n\n![](Foo.png)\n"
+        root = parse_tree(text, is_subsection=False)
+        diagrams = {"Foo.png": "```mermaid\nclassDiagram\n    A --> B\n```"}
+
+        fixed = apply_text_fixups(root, is_subsection=False, diagrams=diagrams)
+
+        self.assertEqual(find(fixed, "Chapter").content, "```mermaid\nclassDiagram\n    A --> B\n```")
+
+    def test_diagram_override_matches_by_basename_ignoring_subdirectory_prefix(self):
+        # Real source images live alongside their sub-section file under a
+        # subdirectory, e.g. interfaces-vs-abstract-classes/Foo.png -- the
+        # [diagrams] table is keyed by bare basename (see data/mapping.toml),
+        # matching how _fix_image_references already normalizes paths.
+        text = "# Title\n\n## Chapter\n\n![](interfaces-vs-abstract-classes/Foo.png)\n"
+        root = parse_tree(text, is_subsection=False)
+        diagrams = {"Foo.png": "```mermaid\nclassDiagram\n    A --> B\n```"}
+
+        fixed = apply_text_fixups(root, is_subsection=False, diagrams=diagrams)
+
+        self.assertEqual(find(fixed, "Chapter").content, "```mermaid\nclassDiagram\n    A --> B\n```")
+
+    def test_diagram_override_also_replaces_raw_content(self):
+        # raw_content must lose the image reference too, or writer.py's
+        # _copy_images_for_content (which scans raw_content, not content)
+        # would still copy the now-orphaned PNG into the output folder.
+        text = "# Title\n\n## Chapter\n\n![](Foo.png)\n"
+        root = parse_tree(text, is_subsection=False)
+        diagrams = {"Foo.png": "```mermaid\nclassDiagram\n    A --> B\n```"}
+
+        fixed = apply_text_fixups(root, is_subsection=False, diagrams=diagrams)
+
+        self.assertEqual(find(fixed, "Chapter").raw_content, "```mermaid\nclassDiagram\n    A --> B\n```")
+
+    def test_image_without_a_diagram_override_is_unaffected_by_the_diagrams_param(self):
+        text = "# Title\n\n## Chapter\n\n![alt](some/deep/path/pic.png)\n"
+        root = parse_tree(text, is_subsection=False)
+        diagrams = {"Foo.png": "```mermaid\nclassDiagram\n    A --> B\n```"}
+
+        fixed = apply_text_fixups(root, is_subsection=False, diagrams=diagrams)
+
+        self.assertEqual(find(fixed, "Chapter").content, "![alt](pic.png)")
+        self.assertEqual(find(fixed, "Chapter").raw_content, "![alt](some/deep/path/pic.png)")
+
+    def test_diagrams_defaults_to_no_overrides_when_omitted(self):
+        text = "# Title\n\n## Chapter\n\n![](Foo.png)\n"
+        root = parse_tree(text, is_subsection=False)
+
+        fixed = apply_text_fixups(root, is_subsection=False)
+
+        self.assertEqual(find(fixed, "Chapter").content, "![](Foo.png)")
+
     def test_fixes_shorthand_longhand_table(self):
         text = (
             "# Title\n\n## Chapter\n\n"

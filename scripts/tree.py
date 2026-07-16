@@ -35,7 +35,7 @@ import io
 import os
 import re
 from dataclasses import dataclass, field, replace
-from typing import Iterator, List
+from typing import Dict, Iterator, List, Optional
 
 from .utils import clean_source_content, extract_heading_text, get_heading_level, github_anchor
 from .crossref import CrossReferenceConverter
@@ -159,6 +159,22 @@ def _fix_image_references(content: str) -> str:
     return _IMAGE_PATTERN.sub(fix, content)
 
 
+def _replace_images_with_diagrams(content: str, diagrams: Dict[str, str]) -> str:
+    """
+    Replace any image reference whose basename is a key in diagrams (see
+    data/mapping.toml's [diagrams] table, loaded via
+    scripts/utils.load_diagram_overrides) with the stored fenced ```mermaid
+    block, dropping the image markdown entirely. Images with no matching
+    entry pass through untouched, for _fix_image_references to normalize as
+    usual.
+    """
+    def fix(match: 're.Match') -> str:
+        filename = os.path.basename(match.group(2))
+        return diagrams.get(filename, match.group(0))
+
+    return _IMAGE_PATTERN.sub(fix, content)
+
+
 def _fix_below_references(content: str) -> str:
     content = re.sub(r'\b(suggestions)\s+below\b', r'\1 on this site', content, flags=re.IGNORECASE)
     content = re.sub(r'\b(recommendations)\s+below\b', r'\1 on this site', content, flags=re.IGNORECASE)
@@ -230,24 +246,36 @@ def flatten_to_single_page(root: Page) -> Page:
     )
 
 
-def apply_text_fixups(root: Page, is_subsection: bool = False) -> Page:
+def apply_text_fixups(root: Page, is_subsection: bool = False, diagrams: Optional[Dict[str, str]] = None) -> Page:
     """
     Rewrite image references (to a bare filename) and stale "below"
     references in every page's content. Returns a new tree.
+
+    diagrams (see data/mapping.toml's [diagrams] table) maps an image's bare
+    basename to a fenced ```mermaid block that should replace it outright --
+    applied to raw_content too, not just content, so writer.py's
+    _copy_images_for_content (which scans raw_content) never copies the
+    now-orphaned image file.
 
     The non-subsection site root is exempt -- ContentProcessor generated it
     via a separate code path that never applied either fixup, only
     cross-reference conversion (see resolve_links).
     """
+    diagrams = diagrams or {}
+
     def fix(page: Page, is_root: bool) -> Page:
         content = page.content
+        raw_content = page.raw_content
         if not is_root:
+            content = _replace_images_with_diagrams(content, diagrams)
             content = _fix_image_references(content)
             content = _fix_below_references(content)
             content = _fix_shorthand_longhand_tables(content)
+            raw_content = _replace_images_with_diagrams(raw_content, diagrams)
         return replace(
             page,
             content=content,
+            raw_content=raw_content,
             children=[fix(child, False) for child in page.children],
         )
 

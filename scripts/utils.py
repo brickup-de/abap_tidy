@@ -377,6 +377,23 @@ def load_link_titles(repo_root: str) -> Dict[str, str]:
     return data.get('linktitles', {})
 
 
+def load_diagram_overrides(repo_root: str) -> Dict[str, str]:
+    """
+    Load data/mapping.toml's [diagrams] table, keyed by an image's bare
+    basename (e.g. "InterfacesVsAbstractClasses-Interface.png"), values the
+    complete fenced ```mermaid block that should replace every reference to
+    that image (see scripts/tree.py's diagram-replacement fixup). Optional:
+    returns {} if the file or table doesn't exist, so a conversion run never
+    depends on it.
+    """
+    path = os.path.join(repo_root, 'data', 'mapping.toml')
+    if not os.path.exists(path):
+        return {}
+    with open(path, 'rb') as f:
+        data = tomllib.load(f)
+    return data.get('diagrams', {})
+
+
 def load_file_config(repo_root: str) -> Dict[str, List[str]]:
     """
     Load data/mapping.toml's [files] table: which Clean ABAP source files to
