@@ -17,7 +17,7 @@
       {{- with $licenseName -}}
         {{ print " under " }}<a class="hx:underline hx:decoration-from-font" target="_blank" rel="noopener noreferrer" href="{{ $licenseURL }}">{{ . }}</a>
       {{- end -}}
-      {{ print " — " }}<a class="hx:underline hx:decoration-from-font" href="{{ "/legal" | relURL }}">more details</a>
+      {{ print " — " }}<a class="hx:underline hx:decoration-from-font" href="{{ "legal" | relURL }}">more details</a>
     {{- end -}}
     {{- if $hasLastmod -}}
       <br>
