@@ -19,4 +19,4 @@ CLASS-METHODS condense RETURNING VALUE(result) TYPE i.
 CLASS-METHODS strlen RETURNING VALUE(result) TYPE i.  
 ```
 
-> Read More in [Built-In Functions - Obscuring with Methods](https://help.sap.com/doc/abapdocu_latest_index_htm/latest/en-us/abenbuilt_in_functions_syntax.htm).
+> Read More in [Built-In Functions - Obscuring with Methods](https://help.sap.com/doc/abapdocu_latest_index_htm/latest/en-us/abenbuilt_in_functions_syntax.html).

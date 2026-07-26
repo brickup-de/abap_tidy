@@ -6,7 +6,7 @@ params:
 ---
 
 If all other techniques fail, or when in dangerous shallow waters of legacy code,
-refrain to [test seams](https://help.sap.com/doc/abapdocu_latest_index_htm/latest/en-US/index.htm?file=abaptest-seam.htm)
+refrain to [test seams](https://help.sap.com/doc/abapdocu_latest_index_htm/latest/en-US/abaptest-seam.html)
 to make things testable.
 
 Although they look comfortable at first sight, test seams are invasive and tend to get entangled

@@ -334,6 +334,21 @@ def resolve_reference_links(lines: List[str]) -> List[str]:
     
     return result
 
+# Remove this after https://github.com/SAP/styleguides/pull/381 merges
+_ABAPDOCU_BASE = r'(https://help\.sap\.com/doc/abapdocu_latest_index_htm/latest/[a-zA-Z-]+/)'
+_ABAPDOCU_REDIRECT_PATTERN = re.compile(_ABAPDOCU_BASE + r'index\.htm\?file=([\w-]+)\.html?')
+_ABAPDOCU_PAGE_PATTERN = re.compile(_ABAPDOCU_BASE + r'([\w-]+)\.htm(?!l)')
+
+def fix_abapdocu_links(lines: List[str]) -> List[str]:
+    """
+    Repair links into the latest ABAP Keyword Documentation
+    """
+    def fix(line: str) -> str:
+        line = _ABAPDOCU_REDIRECT_PATTERN.sub(r'\1\2.html', line)
+        return _ABAPDOCU_PAGE_PATTERN.sub(r'\1\2.html', line)
+
+    return [fix(line) for line in lines]
+
 
 def clean_source_content(lines: List[str]) -> List[str]:
     """
@@ -344,6 +359,7 @@ def clean_source_content(lines: List[str]) -> List[str]:
     4. Remove TOC section
     5. Remove cheat sheet link
     6. Remove "Back to the guide" links
+    7. Repair broken ABAP Keyword Documentation links
     """
     lines = resolve_reference_links(lines)
     lines = remove_language_nav(lines)
@@ -351,6 +367,7 @@ def clean_source_content(lines: List[str]) -> List[str]:
     lines = remove_toc_section(lines)
     lines = remove_cheat_sheet_link(lines)
     lines = remove_back_to_guide_links(lines)
+    lines = fix_abapdocu_links(lines)
     return lines
 
 

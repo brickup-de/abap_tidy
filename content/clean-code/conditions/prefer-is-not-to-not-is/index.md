@@ -25,5 +25,5 @@ IF NOT variable = 42.
 > A more specific variant of
 [Try to make conditions positive](/clean-code/conditions/try-to-make-conditions-positive/).
 Also as described in the section
-[Alternative Language Constructs](https://help.sap.com/doc/abapdocu_latest_index_htm/latest/en-US/index.htm?file=abenalternative_langu_guidl.htm)
+[Alternative Language Constructs](https://help.sap.com/doc/abapdocu_latest_index_htm/latest/en-US/abenalternative_langu_guidl.html)
 in the ABAP programming guidelines.

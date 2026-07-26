@@ -23,7 +23,7 @@ This exception type _must_ be given in method signatures and _must_ be caught or
 It is therefore plain to see for the consumer and ensures that (s)he won't be surprised by an unexpected exception
 and will take care of reacting to the error situation.
 
-> This is in sync with the [ABAP Programming Guidelines](https://help.sap.com/doc/abapdocu_latest_index_htm/latest/en-US/abenexception_category_guidl.htm)
+> This is in sync with the [ABAP Programming Guidelines](https://help.sap.com/doc/abapdocu_latest_index_htm/latest/en-US/abenexception_category_guidl.html)
 > but contradicts [Robert C. Martin's _Clean Code_](https://www.oreilly.com/library/view/clean-code/9780136083238/),
 > which recommends to prefer unchecked exceptions;
 > [Exceptions](/clean-code/deep-dives/exceptions/) explains why.

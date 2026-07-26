@@ -42,4 +42,4 @@ get_large_table( IMPORTING result = DATA(my_table) ).
 > both of whom suggest that large tables should be EXPORTED by reference to avoid performance deficits.
 > We consistently failed to reproduce any performance and memory deficits
 > and received notice about kernel optimization that generally improves RETURNING performance,
-> see [_Sharing Between Dynamic Data Objects_ in the ABAP Language Help](https://help.sap.com/doc/abapdocu_latest_index_htm/latest/en-US/abenmemory_consumption_3.htm).
+> see [_Sharing Between Dynamic Data Objects_ in the ABAP Language Help](https://help.sap.com/doc/abapdocu_latest_index_htm/latest/en-US/abenmemory_consumption_3.html).

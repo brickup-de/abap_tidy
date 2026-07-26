@@ -11,7 +11,7 @@ meaning we adjusted some things to the ABAP programming language
 e.g. [Throw CX_STATIC_CHECK for manageable exceptions](/clean-code/error-handling/throwing/throw-cx_static_check-for-manageable-exceptions/).
 
 Some facts are from the
-[ABAP Programming Guidelines](https://help.sap.com/doc/abapdocu_latest_index_htm/latest/en-US/index.htm?file=abenabap_pgl.htm),
+[ABAP Programming Guidelines](https://help.sap.com/doc/abapdocu_latest_index_htm/latest/en-US/abenabap_pgl.html),
 which this guide is mostly compatible to; deviations are indicated and always in the spirit of cleaner code.
 
 This guide also respects the
