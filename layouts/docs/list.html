@@ -19,9 +19,8 @@
             {{ $sectionIcons := index site.Data.mapping "section-icons" }}
             {{ $cardsContent := "" }}
             {{ range . }}
-              {{ $icon := "document-text" }}
               {{ $relPath := strings.TrimPrefix "/" .Path }}
-              {{ with index $sectionIcons $relPath }}{{ $icon = . }}{{ end }}
+              {{ $icon := index $sectionIcons $relPath }}
               {{ $title := partial "utils/title" . }}
               {{ $cardsContent = printf "%s%s" $cardsContent (partial "shortcodes/card" (dict "link" .RelPermalink "title" $title "icon" $icon)) }}
             {{ end }}
