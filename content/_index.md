@@ -1,7 +1,12 @@
 ---
-title: "Tidy ABAP"
+title: "Clean ABAP"
+weight: 1
+sidebar:
+  hide: true
+params:
+  source: "https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#clean-abap"
 ---
 
-{{< cards cols="1" >}}
-  {{< card link="/clean-code" title="Clean ABAP" subtitle="Guidelines, examples and deep dives for writing clean ABAP code." icon="book-open" >}}
-{{< /cards >}}
+This guide is an adoption of
+[Robert C. Martin's _Clean Code_](https://www.oreilly.com/library/view/clean-code/9780136083238/)
+for [ABAP](https://en.wikipedia.org/wiki/ABAP).

@@ -1,0 +1,20 @@
+---
+title: "Don't chain assignments"
+weight: 210
+params:
+  source: "https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#dont-chain-assignments"
+---
+
+```abap
+" anti-pattern
+var1 = var2 = var3.
+```
+
+Chained assignments usually confuse the reader. Besides, the inline declaration doesn't work in any position of a multiple assignment.
+
+```abap
+var2 = var3.
+var1 = var3.
+```
+
+Furthermore, the anti-pattern looks ambiguous because `=` is used for comparisons and assignments in ABAP. It looks similar to how other programming languages implement comparisons, for example `a = ( b == c )` in JavaScript. [Use `xsdbool` for comparisons.](/booleans/use-xsdbool-to-set-boolean-variables/)

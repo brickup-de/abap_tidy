@@ -218,21 +218,21 @@ class ResolveLinksTests(unittest.TestCase):
             "## Chapter\n\nAlso see [a link](#some-target).\n"
         )
         root = parse_tree(text, is_subsection=False)
-        converter = CrossReferenceConverter({"some-target": "/clean-code/some-target/"})
+        converter = CrossReferenceConverter({"some-target": "/some-target/"})
 
         resolved = resolve_links(root, converter)
 
-        self.assertEqual(resolved.content, "See [a link](/clean-code/some-target/).")
+        self.assertEqual(resolved.content, "See [a link](/some-target/).")
         self.assertEqual(
             find(resolved, "Chapter").content,
-            "Also see [a link](/clean-code/some-target/).",
+            "Also see [a link](/some-target/).",
         )
 
     def test_does_not_mutate_the_input_tree(self):
         text = "# Title\n\nSee [a link](#some-target).\n"
         root = parse_tree(text, is_subsection=False)
         original_content = root.content
-        converter = CrossReferenceConverter({"some-target": "/clean-code/some-target/"})
+        converter = CrossReferenceConverter({"some-target": "/some-target/"})
 
         resolve_links(root, converter)
 

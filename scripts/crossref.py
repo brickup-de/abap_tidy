@@ -59,13 +59,13 @@ class CrossReferenceConverter:
                 # Link into the main guide - resolve via the fragment if
                 # present, otherwise point at the guide's root page.
                 if fragment_anchor is None:
-                    return f"[{link_text}](/clean-code/)"
+                    return f"[{link_text}](/)"
                 anchor = fragment_anchor
             elif subdir == 'sub-sections':
                 # Link into a sub-section (deep-dive) file.
                 if fragment_anchor is None:
                     folder = kebab_case(filename)
-                    return f"[{link_text}](/clean-code/deep-dives/{folder}/)"
+                    return f"[{link_text}](/deep-dives/{folder}/)"
                 anchor = fragment_anchor
             else:
                 # Reference to a file outside the generated content (e.g.
@@ -111,13 +111,13 @@ class CrossReferenceConverter:
                         return f"[{link_text}]({base_path}{remaining}/)"
                     return f"[{link_text}]({base_path})"
         
-        # Last resort: return original link but with /clean-code/ prefix
+        # Last resort: return original link but with a leading slash
         # This handles external links or links we can't resolve
         if anchor.startswith('http') or anchor.startswith('/'):
             return f"[{link_text}]({anchor})"
 
         # For internal links that we couldn't resolve, use a reasonable default
-        return f"[{link_text}](/clean-code/{kebab_anchor}/)"
+        return f"[{link_text}](/{kebab_anchor}/)"
 
     def convert_content(self, content: str) -> str:
         """

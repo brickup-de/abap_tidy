@@ -4,7 +4,7 @@ A Hugo project that turns SAP's [Clean ABAP](https://github.com/SAP/styleguides)
 
 [![](preview.png "Preview of the website")](https://brickup-de.github.io/abap_tidy/)
 
-The Markdown under `content/clean-code/` is generated, not hand-written — it's produced from the upstream style guide by a Python conversion pipeline.
+The Markdown under `content/` is generated, not hand-written — it's produced from the upstream style guide by a Python conversion pipeline. The only exceptions are the hand-written pages listed under `[content].preserve` in `data/mapping.toml` (currently just `legal.md`), which the pipeline never touches.
 
 ## Quick start
 
@@ -22,7 +22,7 @@ npm run build     # hugo --minify + ABAP syntax highlighting pass
 npm run preview   # build, then serve /public on :1414 (with syntax highlighting)
 ```
 
-**No hand-edited files under `content/`** — they're git versioned so diffs are easy to review.
+**No hand-edited generated files under `content/`** — they're git versioned so diffs are easy to review.
 To change the generated content, change the script and re-run it.
 
 ## Tests
@@ -36,8 +36,8 @@ python3 -m pytest scripts/tests/
 ## Repo layout
 
 - `scripts/` — the Markdown → Hugo conversion pipeline and its tests
-- `content/` — generated Hugo content (do not edit directly)
-- `assets/sources/` — upstream style guides, as git submodules
+- `content/` — generated Hugo content (do not edit directly, except hand-written pages listed in `[content].preserve`)
+- `assets/sap-styleguides/` — the upstream Clean ABAP style guide, as a git submodule
 - `layouts/` — Hugo template overrides (Hextra theme customizations)
 - `docs/agents/` — process docs for AI coding agents working in this repo (issue tracking, triage labels, domain docs). Created by experimenting with [Matt Pocock's Skills](https://github.com/mattpocock/skills).
 

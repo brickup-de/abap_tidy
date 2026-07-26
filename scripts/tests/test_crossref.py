@@ -18,14 +18,14 @@ class BuildPathMappingTests(unittest.TestCase):
     def test_emits_lowercase_text_kebab_and_hash_kebab_keys(self):
         headings = [{
             'text': 'Use Descriptive Names',
-            'path': '/clean-code/names/use-descriptive-names/',
+            'path': '/names/use-descriptive-names/',
             'level': 3,
         }]
         mapping = build_path_mapping(headings)
 
-        self.assertEqual(mapping['use descriptive names'], '/clean-code/names/use-descriptive-names/')
-        self.assertEqual(mapping['use-descriptive-names'], '/clean-code/names/use-descriptive-names/')
-        self.assertEqual(mapping['#use-descriptive-names'], '/clean-code/names/use-descriptive-names/')
+        self.assertEqual(mapping['use descriptive names'], '/names/use-descriptive-names/')
+        self.assertEqual(mapping['use-descriptive-names'], '/names/use-descriptive-names/')
+        self.assertEqual(mapping['#use-descriptive-names'], '/names/use-descriptive-names/')
 
     def test_kebab_lower_key_is_a_redundant_duplicate_of_the_kebab_key(self):
         # kebab_text = github_anchor(text) is already lowercase, so
@@ -73,15 +73,15 @@ class FileLinkPatternTests(unittest.TestCase):
         # Shared mapping used by the two fragment cases, which fall through
         # to ordinary anchor resolution after stripping the file prefix.
         self.converter = CrossReferenceConverter({
-            'some-anchor': '/clean-code/some-anchor/',
+            'some-anchor': '/some-anchor/',
         })
 
     def test_file_link_cases(self):
         cases = [
-            ('main guide, no fragment', 'CleanABAP.md', '[text](/clean-code/)'),
-            ('main guide, with fragment', 'CleanABAP.md#some-anchor', '[text](/clean-code/some-anchor/)'),
-            ('sub-section, no fragment', 'sub-sections/Enumerations.md', '[text](/clean-code/deep-dives/enumerations/)'),
-            ('sub-section, with fragment', 'sub-sections/Enumerations.md#some-anchor', '[text](/clean-code/some-anchor/)'),
+            ('main guide, no fragment', 'CleanABAP.md', '[text](/)'),
+            ('main guide, with fragment', 'CleanABAP.md#some-anchor', '[text](/some-anchor/)'),
+            ('sub-section, no fragment', 'sub-sections/Enumerations.md', '[text](/deep-dives/enumerations/)'),
+            ('sub-section, with fragment', 'sub-sections/Enumerations.md#some-anchor', '[text](/some-anchor/)'),
             ('external, with up_dir', '../CONTRIBUTING.md', '[text](https://github.com/SAP/styleguides/blob/main/CONTRIBUTING.md)'),
             ('external, without up_dir', 'CONTRIBUTING.md', '[text](https://github.com/SAP/styleguides/blob/main/clean-abap/CONTRIBUTING.md)'),
         ]
@@ -94,17 +94,17 @@ class AnchorResolutionOrderTests(unittest.TestCase):
     """The fallback cascade convert_link runs through once no FILE_LINK_PATTERN applies."""
 
     def test_exact_match_with_hash_prefix(self):
-        converter = CrossReferenceConverter({'exact-match': '/clean-code/exact-match/'})
+        converter = CrossReferenceConverter({'exact-match': '/exact-match/'})
         self.assertEqual(
             converter.convert_link('text', '#exact-match'),
-            '[text](/clean-code/exact-match/)',
+            '[text](/exact-match/)',
         )
 
     def test_exact_match_without_hash_prefix(self):
-        converter = CrossReferenceConverter({'some-plain-word': '/clean-code/some-plain-word/'})
+        converter = CrossReferenceConverter({'some-plain-word': '/some-plain-word/'})
         self.assertEqual(
             converter.convert_link('text', 'some-plain-word'),
-            '[text](/clean-code/some-plain-word/)',
+            '[text](/some-plain-word/)',
         )
 
     def test_kebab_anchor_match_when_raw_anchor_is_not_a_key(self):
@@ -114,10 +114,10 @@ class AnchorResolutionOrderTests(unittest.TestCase):
         # real Clean ABAP content showed 0 hits here). Characterized in
         # isolation by handing convert_link a mapping that only has the
         # normalized key, not the raw one.
-        converter = CrossReferenceConverter({'some-anchor': '/clean-code/some-anchor/'})
+        converter = CrossReferenceConverter({'some-anchor': '/some-anchor/'})
         self.assertEqual(
             converter.convert_link('text', '#Some Anchor'),
-            '[text](/clean-code/some-anchor/)',
+            '[text](/some-anchor/)',
         )
 
     def test_closest_match_loop_when_mapping_lacks_a_normalized_key(self):
@@ -127,17 +127,17 @@ class AnchorResolutionOrderTests(unittest.TestCase):
         # Reachable only when path_mapping was built by something other than
         # build_path_mapping. Characterized here directly against
         # convert_link, not through the real mapping builder.
-        converter = CrossReferenceConverter({'weird anchor': '/clean-code/weird-anchor/'})
+        converter = CrossReferenceConverter({'weird anchor': '/weird-anchor/'})
         self.assertEqual(
             converter.convert_link('text', '#weird-anchor'),
-            '[text](/clean-code/weird-anchor/)',
+            '[text](/weird-anchor/)',
         )
 
     def test_prefix_fallback_appends_remaining_segments(self):
-        converter = CrossReferenceConverter({'parent-topic': '/clean-code/parent-topic/'})
+        converter = CrossReferenceConverter({'parent-topic': '/parent-topic/'})
         self.assertEqual(
             converter.convert_link('text', '#parent-topic-extra-words'),
-            '[text](/clean-code/parent-topic/extra-words/)',
+            '[text](/parent-topic/extra-words/)',
         )
 
     def test_prefix_fallback_with_no_remaining_segment(self):
@@ -145,17 +145,17 @@ class AnchorResolutionOrderTests(unittest.TestCase):
         # path_part, so the matched prefix leaves nothing to append -- the
         # `else: return base_path` line, otherwise unreached by any of the
         # cases above.
-        converter = CrossReferenceConverter({'topic': '/clean-code/topic/'})
+        converter = CrossReferenceConverter({'topic': '/topic/'})
         self.assertEqual(
             converter.convert_link('text', '#Topic-'),
-            '[text](/clean-code/topic/)',
+            '[text](/topic/)',
         )
 
     def test_unresolved_anchor_falls_back_to_a_guessed_path(self):
         converter = CrossReferenceConverter({})
         self.assertEqual(
             converter.convert_link('text', '#totally-unknown-thing'),
-            '[text](/clean-code/totally-unknown-thing/)',
+            '[text](/totally-unknown-thing/)',
         )
 
     def test_known_bug_unrecognized_file_prefix_produces_a_broken_guess(self):
@@ -170,20 +170,20 @@ class AnchorResolutionOrderTests(unittest.TestCase):
         converter = CrossReferenceConverter({})
         self.assertEqual(
             converter.convert_link('text', 'cheat-sheet/CheatSheet.md'),
-            '[text](/clean-code/cheat-sheetcheatsheetmd/)',
+            '[text](/cheat-sheetcheatsheetmd/)',
         )
 
 
 class ConvertContentTests(unittest.TestCase):
     def test_delegates_each_markdown_link_to_convert_link(self):
-        converter = CrossReferenceConverter({'exact-match': '/clean-code/exact-match/'})
+        converter = CrossReferenceConverter({'exact-match': '/exact-match/'})
         content = "See [the doc](#exact-match) and [absolute](/already/there/)."
 
         result = converter.convert_content(content)
 
         self.assertEqual(
             result,
-            "See [the doc](/clean-code/exact-match/) and [absolute](/already/there/).",
+            "See [the doc](/exact-match/) and [absolute](/already/there/).",
         )
 
 

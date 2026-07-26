@@ -5,7 +5,7 @@ Utility functions for Clean ABAP to Hugo conversion.
 import re
 import os
 import tomllib
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Set
 
 
 def kebab_case(text: str) -> str:
@@ -378,13 +378,30 @@ def ensure_directory(path: str) -> None:
     os.makedirs(path, exist_ok=True)
 
 
+def load_preserve_list(repo_root: str) -> Set[str]:
+    """
+    Load data/mapping.toml's [content].preserve list: top-level entries
+    under content/ that setup_output_dir must not delete on rerun, e.g.
+    "legal.md" -- a hand-written page living alongside the generated tree.
+    Optional: returns an empty set if the file or table doesn't exist, so a
+    conversion run never depends on it (and starts out deleting everything,
+    the old behavior).
+    """
+    path = os.path.join(repo_root, 'data', 'mapping.toml')
+    if not os.path.exists(path):
+        return set()
+    with open(path, 'rb') as f:
+        data = tomllib.load(f)
+    return set(data.get('content', {}).get('preserve', []))
+
+
 def load_link_titles(repo_root: str) -> Dict[str, str]:
     """
     Load sidebar/breadcrumb short-title overrides from data/mapping.toml's
-    [linktitles] table, keyed by each page's generated path under
-    content/clean-code (folder slugs joined by "/", no leading/trailing
-    slash -- see scripts/writer.py's link_title lookup). Optional: returns
-    {} if the file doesn't exist, so a conversion run never depends on it.
+    [linktitles] table, keyed by each page's generated path under content/
+    (folder slugs joined by "/", no leading/trailing slash -- see
+    scripts/writer.py's link_title lookup). Optional: returns {} if the
+    file doesn't exist, so a conversion run never depends on it.
     """
     path = os.path.join(repo_root, 'data', 'mapping.toml')
     if not os.path.exists(path):
@@ -416,7 +433,7 @@ def load_file_config(repo_root: str) -> Dict[str, List[str]]:
     Load data/mapping.toml's [files] table: which Clean ABAP source files to
     process and how -- 'chapterize' (split into one Hugo page per heading,
     the original behavior) vs 'keep' (render as a single page). Paths are
-    relative to assets/sources/sap-styleguides/clean-abap/.
+    relative to assets/sap-styleguides/clean-abap/.
 
     Unlike load_link_titles, this is required -- it's the sole source of
     truth for which source files exist (see scripts/main.py's

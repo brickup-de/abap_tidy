@@ -8,7 +8,7 @@ import sys
 import shutil
 from typing import Dict, List, Optional, Set, Tuple
 
-from .utils import kebab_case, ensure_directory, github_anchor, load_diagram_overrides, load_file_config, load_link_titles
+from .utils import kebab_case, ensure_directory, github_anchor, load_diagram_overrides, load_file_config, load_link_titles, load_preserve_list
 from .frontmatter import generate_front_matter, get_deep_dives_source_url
 from .crossref import CrossReferenceConverter, build_path_mapping
 from .tree import Page, flatten_to_single_page, parse_tree, resolve_links, apply_text_fixups, walk
@@ -19,7 +19,7 @@ def get_source_files(base_dir: str) -> Dict[str, object]:
     """
     Resolve data/mapping.toml's [files] table (see load_file_config) against
     the source files actually on disk under
-    assets/sources/sap-styleguides/clean-abap/.
+    assets/sap-styleguides/clean-abap/.
 
     [files] is the sole source of truth for which source files get
     processed, and how -- 'chapterize' (split per heading, unchanged
@@ -32,7 +32,7 @@ def get_source_files(base_dir: str) -> Dict[str, object]:
         Dict with 'main' (path or None), 'sub_sections' (list of paths),
         and 'keep_files' (set of sub_sections paths to render single-page).
     """
-    clean_abap_dir = os.path.join(base_dir, 'assets', 'sources', 'sap-styleguides', 'clean-abap')
+    clean_abap_dir = os.path.join(base_dir, 'assets', 'sap-styleguides', 'clean-abap')
     file_config = load_file_config(base_dir)
 
     main_file = None
@@ -78,7 +78,7 @@ def _heading_entry(page: Page, prefix_parts: List[str]) -> Dict:
     path = '/' + '/'.join(prefix_parts + page.path_parts)
     return {
         'text': page.title,
-        'path': f"/clean-code{path}/",
+        'path': f"{path}/",
         'level': page.level,
     }
 
@@ -160,7 +160,7 @@ def parse_sub_sections(
 
         tree = parse_tree(markdown_text, is_subsection=True, subsection_index=i)
         if file_path in keep_files:
-            dive_url = f"/clean-code/deep-dives/{folder_name}/"
+            dive_url = f"/deep-dives/{folder_name}/"
             heading_data = [_heading_entry_single_page(page, dive_url) for page in walk(tree)]
         else:
             heading_data = [_heading_entry(page, ['deep-dives', folder_name]) for page in walk(tree)]
@@ -235,13 +235,27 @@ def write_sub_section(
     print(f"Generated {file_count} files from {filename}")
 
 
-def setup_output_dir(output_dir: str) -> None:
+def setup_output_dir(output_dir: str, preserve: Optional[Set[str]] = None) -> None:
     """
-    Clean up any existing generated content and recreate the output directory.
+    Clear generated content from output_dir, without touching entries named
+    in preserve (see data/mapping.toml's [content].preserve) -- hand-written
+    pages, such as legal.md, that live alongside the generated tree and
+    must survive a rerun.
     """
-    if os.path.exists(output_dir):
-        shutil.rmtree(output_dir)
-    ensure_directory(output_dir)
+    preserve = preserve or set()
+
+    if not os.path.exists(output_dir):
+        ensure_directory(output_dir)
+        return
+
+    for entry in os.listdir(output_dir):
+        if entry in preserve:
+            continue
+        entry_path = os.path.join(output_dir, entry)
+        if os.path.isdir(entry_path):
+            shutil.rmtree(entry_path)
+        else:
+            os.remove(entry_path)
 
 
 def run_conversion(repo_root: str, output_dir: str) -> None:
@@ -295,18 +309,20 @@ def run_conversion(repo_root: str, output_dir: str) -> None:
 
 def find_internal_links(content: str) -> List[str]:
     """
-    Extract internal /clean-code/... link targets from markdown content.
+    Extract internal (site-absolute) link targets from markdown content.
     """
     return [
         target for _text, target in re.findall(r'\[([^\]]+)\]\(([^)]+)\)', content)
-        if target.startswith('/clean-code/')
+        if target.startswith('/')
     ]
 
 
 def validate_cross_references(output_dir: str) -> List[Tuple[str, str]]:
     """
-    Scan all generated markdown files for internal /clean-code/ links and
-    check that each one resolves to a generated page.
+    Scan all generated markdown files for internal (site-absolute) links
+    and check that each one resolves to a page under output_dir -- either a
+    generated directory (index.md/_index.md) or a hand-written bare
+    <name>.md file (e.g. legal.md, referenced as "/legal").
 
     Returns:
         List of (source_file, broken_link) pairs.
@@ -322,18 +338,22 @@ def validate_cross_references(output_dir: str) -> List[Tuple[str, str]]:
                 content = f.read()
 
             for link in find_internal_links(content):
-                # Link targets look like "/clean-code/names/use-descriptive-names/",
+                # Link targets look like "/names/use-descriptive-names/",
                 # or, for a #anchor into a "keep" (single-page) dive,
-                # "/clean-code/deep-dives/avoid-encodings/#the-reasoning" --
-                # the fragment addresses a heading within the page, not a
+                # "/deep-dives/avoid-encodings/#the-reasoning" -- the
+                # fragment addresses a heading within the page, not a
                 # separate page, so it must be dropped before checking
-                # existence. Drop the leading "clean-code" segment too,
-                # since it's already output_dir.
+                # existence.
                 page_path = link.split('#', 1)[0]
-                sub_parts = page_path.strip('/').split('/')[1:]
+                sub_parts = page_path.strip('/').split('/') if page_path.strip('/') else []
                 target_dir = os.path.join(output_dir, *sub_parts) if sub_parts else output_dir
-                if not (os.path.isfile(os.path.join(target_dir, 'index.md')) or
-                        os.path.isfile(os.path.join(target_dir, '_index.md'))):
+                bare_md = os.path.join(output_dir, *sub_parts[:-1], f"{sub_parts[-1]}.md") if sub_parts else None
+                resolved = (
+                    os.path.isfile(os.path.join(target_dir, 'index.md')) or
+                    os.path.isfile(os.path.join(target_dir, '_index.md')) or
+                    (bare_md is not None and os.path.isfile(bare_md))
+                )
+                if not resolved:
                     broken.append((file_path, link))
 
     return broken
@@ -359,9 +379,9 @@ def main():
     """
     script_dir = os.path.dirname(os.path.abspath(__file__))
     repo_root = os.path.dirname(script_dir)
-    output_dir = os.path.join(repo_root, 'content', 'clean-code')
+    output_dir = os.path.join(repo_root, 'content')
 
-    setup_output_dir(output_dir)
+    setup_output_dir(output_dir, load_preserve_list(repo_root))
     try:
         run_conversion(repo_root, output_dir)
     except ValueError as e:

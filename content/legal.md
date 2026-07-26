@@ -1,7 +1,9 @@
 ---
 title: "Legal & Attribution"
+excludeSearch: true
 sidebar:
   hide: true
+  exclude: true
 ---
 
 ## Source content
@@ -26,14 +28,14 @@ CC BY 3.0 requires indicating when material has been adapted. This site:
 - Presents content as short, browsable pages instead of one long document
 - Adapts cross-references and some wording to fit the new multi-page layout
 - Provides a search tool across all resulting pages
-- Removes what's only needed for navigating the original sources (ToCs/breadcrumbs/...)
+- Removes boilerplate for navigating the original large source files (ToCs/breadcrumbs/...)
 
 It is not intended to alter the technical and factual content; only its presentation.
 Each adapted page links back to its specific source file so you can compare against the original.
 
 ## About this site
 
-"Tidy ABAP" is an independent, unofficial project maintained by
+This website is an independent, unofficial project maintained by
 [Tobias Buckdahn](https://github.com/brickup-de).
 It is not affiliated with, endorsed by, or sponsored by SAP SE.
 This site's own code and design are available on

@@ -8,7 +8,7 @@ const PUBLIC_DIR = path.resolve(import.meta.dirname, "..", "public");
 // "shiki-pending" marker text, never a full HTML parse + re-serialize of
 // the whole file. A full DOM round-trip (previously tried with
 // node-html-parser) mis-closes Hugo's --minify unquoted attribute values
-// like `href=/clean-code/>` as self-closing tags, silently corrupting
+// like `href=/deep-dives/>` as self-closing tags, silently corrupting
 // unrelated markup (e.g. moving sidebar/navbar links' text outside their
 // <a> tags) across the entire page.
 const HTML_PENDING_RE =

@@ -23,7 +23,7 @@ always a level-1 sub-section heading, and just above that special case,
 ContentProcessor._generate_heading_file forces path_parts to [] for every
 level-1 heading, so the special case's `path_parts == ['deep-dives']` guard
 can never be true. Confirmed against the real generated
-content/clean-code/deep-dives/_index.md, whose source URL matches
+content/deep-dives/_index.md, whose source URL matches
 main.py's separate, unconditional deep-dives/_index.md write -- not the
 URL format the dead special case would have produced.
 """

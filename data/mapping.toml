@@ -13,6 +13,13 @@ keep = [
   "sub-sections/UpperVsLowerCase.md",
 ]
 
+[content]
+# Top-level entries under content/ that refresh_content.py must not delete
+# on rerun -- hand-written pages living alongside the generated tree.
+preserve = [
+  "legal.md",
+]
+
 [diagrams]
 # Overrides that replace a source image with a hand-written mermaid diagram
 "InterfacesVsAbstractClasses-Interface.png" = '''

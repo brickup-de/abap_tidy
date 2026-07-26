@@ -1,0 +1,26 @@
+---
+title: "Add a single blank line to separate things, but not more"
+linkTitle: "Separate with single blank line"
+weight: 80
+params:
+  source: "https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#add-a-single-blank-line-to-separate-things-but-not-more"
+---
+
+```ABAP
+DATA(result) = do_something( ).
+
+DATA(else) = calculate_this( result ).
+```
+
+to highlight that the two statements do different things. But there is no reason for
+
+```ABAP
+" anti-pattern
+DATA(result) = do_something( ).
+
+
+
+DATA(else) = calculate_this( result ).
+```
+
+The urge to add separating blank lines may be an indicator that your method doesn't [do one thing](/methods/method-body/do-one-thing-do-it-well-do-it-only/).

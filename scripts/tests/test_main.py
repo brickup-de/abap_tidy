@@ -32,7 +32,10 @@ import os
 import tempfile
 import unittest
 
-from scripts.main import get_source_files, parse_main, parse_sub_sections, run_conversion, validate_cross_references
+from scripts.main import (
+    get_source_files, parse_main, parse_sub_sections, run_conversion,
+    setup_output_dir, validate_cross_references,
+)
 
 
 def write_file(path, content):
@@ -54,7 +57,7 @@ def write_mapping_toml(repo_root, chapterize, keep, diagrams=None):
 
 class GetSourceFilesTests(unittest.TestCase):
     def _clean_abap_dir(self, repo_root):
-        return os.path.join(repo_root, 'assets', 'sources', 'sap-styleguides', 'clean-abap')
+        return os.path.join(repo_root, 'assets', 'sap-styleguides', 'clean-abap')
 
     def test_resolves_main_and_sub_sections_and_keep_files_from_config(self):
         with tempfile.TemporaryDirectory() as repo_root:
@@ -126,7 +129,7 @@ class ParseMainTests(unittest.TestCase):
 
         self.assertEqual(tree.title, "Clean ABAP")
         self.assertEqual(heading_data, [
-            {'text': 'Names', 'path': '/clean-code/names/', 'level': 2},
+            {'text': 'Names', 'path': '/names/', 'level': 2},
         ])
 
     def test_does_not_write_any_files(self):
@@ -162,8 +165,8 @@ class ParseSubSectionsTests(unittest.TestCase):
 
         self.assertEqual(folder_name, "some-topic")
         self.assertEqual(heading_data, [
-            {'text': 'Some Topic', 'path': '/clean-code/deep-dives/some-topic/', 'level': 1},
-            {'text': 'Detail', 'path': '/clean-code/deep-dives/some-topic/detail/', 'level': 2},
+            {'text': 'Some Topic', 'path': '/deep-dives/some-topic/', 'level': 1},
+            {'text': 'Detail', 'path': '/deep-dives/some-topic/detail/', 'level': 2},
         ])
 
     def test_heading_data_uses_dive_url_plus_fragment_for_keep_files(self):
@@ -178,14 +181,14 @@ class ParseSubSectionsTests(unittest.TestCase):
 
         self.assertEqual(folder_name, "some-topic")
         self.assertEqual(heading_data, [
-            {'text': 'Some Topic', 'path': '/clean-code/deep-dives/some-topic/', 'level': 1},
-            {'text': 'Detail', 'path': '/clean-code/deep-dives/some-topic/#detail', 'level': 2},
+            {'text': 'Some Topic', 'path': '/deep-dives/some-topic/', 'level': 1},
+            {'text': 'Detail', 'path': '/deep-dives/some-topic/#detail', 'level': 2},
         ])
 
 
 def run_conversion_for_test(main_content, sub_sections, keep=(), diagrams=None):
     with tempfile.TemporaryDirectory() as repo_root, tempfile.TemporaryDirectory() as output_dir:
-        clean_abap_dir = os.path.join(repo_root, 'assets', 'sources', 'sap-styleguides', 'clean-abap')
+        clean_abap_dir = os.path.join(repo_root, 'assets', 'sap-styleguides', 'clean-abap')
         write_file(os.path.join(clean_abap_dir, 'CleanABAP.md'), main_content)
         for filename, content in sub_sections.items():
             write_file(os.path.join(clean_abap_dir, 'sub-sections', filename), content)
@@ -224,7 +227,7 @@ class RunConversionCrossReferenceOrderTests(unittest.TestCase):
         generated = self._run(main_content, sub_sections)
         names_content = generated[os.path.join('names', 'index.md')]
 
-        self.assertIn('(/clean-code/deep-dives/avoid-encodings/)', names_content)
+        self.assertIn('(/deep-dives/avoid-encodings/)', names_content)
 
     def test_alphabetically_early_subsection_link_to_later_subsection_heading_resolves(self):
         main_content = "# Clean ABAP\n\n## Names\n\nUse descriptive names.\n"
@@ -236,7 +239,7 @@ class RunConversionCrossReferenceOrderTests(unittest.TestCase):
         generated = self._run(main_content, sub_sections)
         aaa_content = generated[os.path.join('deep-dives', 'aaa-topic', 'index.md')]
 
-        self.assertIn('(/clean-code/deep-dives/zzz-topic/zzz-heading/)', aaa_content)
+        self.assertIn('(/deep-dives/zzz-topic/zzz-heading/)', aaa_content)
 
     def test_main_self_reference_is_not_hijacked_by_identically_titled_subsection_heading(self):
         main_content = (
@@ -252,8 +255,8 @@ class RunConversionCrossReferenceOrderTests(unittest.TestCase):
         generated = self._run(main_content, sub_sections)
         error_handling_content = generated[os.path.join('error-handling', '_index.md')]
 
-        self.assertIn('(/clean-code/error-handling/exceptions/)', error_handling_content)
-        self.assertNotIn('/clean-code/deep-dives/exceptions/', error_handling_content)
+        self.assertIn('(/error-handling/exceptions/)', error_handling_content)
+        self.assertNotIn('/deep-dives/exceptions/', error_handling_content)
 
 
 class RunConversionKeepModeTests(unittest.TestCase):
@@ -293,7 +296,7 @@ class RunConversionKeepModeTests(unittest.TestCase):
         generated = run_conversion_for_test(main_content, sub_sections, keep=("AvoidEncodings.md",))
         names_content = generated[os.path.join('names', 'index.md')]
 
-        self.assertIn('(/clean-code/deep-dives/avoid-encodings/#the-reasoning)', names_content)
+        self.assertIn('(/deep-dives/avoid-encodings/#the-reasoning)', names_content)
 
     def test_chapterize_dive_unaffected_by_an_unrelated_keep_dive(self):
         main_content = "# Clean ABAP\n\n## Names\n\nUse descriptive names.\n"
@@ -314,7 +317,7 @@ class RunConversionDiagramOverrideTests(unittest.TestCase):
         diagram_block = "```mermaid\nclassDiagram\n    A --> B\n```"
 
         with tempfile.TemporaryDirectory() as repo_root, tempfile.TemporaryDirectory() as output_dir:
-            clean_abap_dir = os.path.join(repo_root, 'assets', 'sources', 'sap-styleguides', 'clean-abap')
+            clean_abap_dir = os.path.join(repo_root, 'assets', 'sap-styleguides', 'clean-abap')
             write_file(os.path.join(clean_abap_dir, 'CleanABAP.md'), main_content)
             write_file(os.path.join(clean_abap_dir, 'sub-sections', 'SomeDive.md'), sub_section_content)
             os.makedirs(os.path.join(clean_abap_dir, 'sub-sections', 'some-dive'))
@@ -346,7 +349,7 @@ class ValidateCrossReferencesTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as output_dir:
             write_file(
                 os.path.join(output_dir, 'names', 'index.md'),
-                "See [reasoning](/clean-code/deep-dives/avoid-encodings/#the-reasoning).\n",
+                "See [reasoning](/deep-dives/avoid-encodings/#the-reasoning).\n",
             )
             write_file(os.path.join(output_dir, 'deep-dives', 'avoid-encodings', 'index.md'), "# Avoid Encodings\n")
 
@@ -356,24 +359,87 @@ class ValidateCrossReferencesTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as output_dir:
             write_file(
                 os.path.join(output_dir, 'names', 'index.md'),
-                "See [reasoning](/clean-code/deep-dives/does-not-exist/#the-reasoning).\n",
+                "See [reasoning](/deep-dives/does-not-exist/#the-reasoning).\n",
             )
 
             broken = validate_cross_references(output_dir)
 
         self.assertEqual(len(broken), 1)
-        self.assertIn('/clean-code/deep-dives/does-not-exist/#the-reasoning', broken[0][1])
+        self.assertIn('/deep-dives/does-not-exist/#the-reasoning', broken[0][1])
 
     def test_link_without_a_fragment_to_a_non_existing_page_is_still_reported_as_broken(self):
         with tempfile.TemporaryDirectory() as output_dir:
             write_file(
                 os.path.join(output_dir, 'names', 'index.md'),
-                "See [reasoning](/clean-code/deep-dives/does-not-exist/).\n",
+                "See [reasoning](/deep-dives/does-not-exist/).\n",
             )
 
             broken = validate_cross_references(output_dir)
 
         self.assertEqual(len(broken), 1)
+
+    def test_link_to_a_bare_hand_written_md_file_is_not_reported_as_broken(self):
+        # Hand-written pages like legal.md have no directory of their own --
+        # a link to "/legal" must resolve against content/legal.md directly.
+        with tempfile.TemporaryDirectory() as output_dir:
+            write_file(
+                os.path.join(output_dir, 'names', 'index.md'),
+                "See the [legal notice](/legal) for details.\n",
+            )
+            write_file(os.path.join(output_dir, 'legal.md'), "# Legal\n")
+
+            self.assertEqual(validate_cross_references(output_dir), [])
+
+    def test_link_to_a_non_existing_bare_md_file_is_reported_as_broken(self):
+        with tempfile.TemporaryDirectory() as output_dir:
+            write_file(
+                os.path.join(output_dir, 'names', 'index.md'),
+                "See the [legal notice](/legal) for details.\n",
+            )
+
+            broken = validate_cross_references(output_dir)
+
+        self.assertEqual(len(broken), 1)
+
+
+class SetupOutputDirTests(unittest.TestCase):
+    def test_creates_output_dir_if_missing(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            output_dir = os.path.join(tmp, 'content')
+
+            setup_output_dir(output_dir)
+
+            self.assertTrue(os.path.isdir(output_dir))
+
+    def test_removes_all_entries_when_no_preserve_list_given(self):
+        with tempfile.TemporaryDirectory() as output_dir:
+            write_file(os.path.join(output_dir, 'names', 'index.md'), "stale\n")
+            write_file(os.path.join(output_dir, 'legal.md'), "# Legal\n")
+
+            setup_output_dir(output_dir)
+
+            self.assertEqual(os.listdir(output_dir), [])
+
+    def test_preserves_named_entries_but_clears_everything_else(self):
+        with tempfile.TemporaryDirectory() as output_dir:
+            write_file(os.path.join(output_dir, 'names', 'index.md'), "stale\n")
+            write_file(os.path.join(output_dir, 'legal.md'), "# Legal\n")
+
+            setup_output_dir(output_dir, preserve={'legal.md'})
+
+            self.assertEqual(os.listdir(output_dir), ['legal.md'])
+            with open(os.path.join(output_dir, 'legal.md'), encoding='utf-8') as f:
+                self.assertEqual(f.read(), "# Legal\n")
+
+    def test_rerun_is_idempotent_and_never_deletes_a_preserved_file(self):
+        with tempfile.TemporaryDirectory() as output_dir:
+            write_file(os.path.join(output_dir, 'legal.md'), "# Legal\n")
+
+            setup_output_dir(output_dir, preserve={'legal.md'})
+            write_file(os.path.join(output_dir, 'names', 'index.md'), "regenerated\n")
+            setup_output_dir(output_dir, preserve={'legal.md'})
+
+            self.assertEqual(os.listdir(output_dir), ['legal.md'])
 
 
 if __name__ == '__main__':

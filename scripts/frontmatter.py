@@ -117,6 +117,6 @@ def get_deep_dives_source_url() -> str:
 
 def get_root_source_url() -> str:
     """
-    Get source URL for the root clean-code page.
+    Get source URL for the site's root page.
     """
     return "https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#clean-abap"
