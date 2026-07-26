@@ -1,6 +1,7 @@
 ---
 title: "Clean ABAP"
 weight: 1
+toc: false
 sidebar:
   hide: true
 params:

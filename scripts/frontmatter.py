@@ -59,6 +59,7 @@ def generate_front_matter(
         lines.append(f'linkTitle: "{escape_yaml_string(link_title)}"')
     lines.append(f'weight: {weight}')
     if sidebar_hide:
+        lines.append('toc: false')
         lines.append('sidebar:')
         lines.append('  hide: true')
     lines.append('params:')

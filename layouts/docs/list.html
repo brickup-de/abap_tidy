@@ -8,11 +8,13 @@
         <div class="content">
           {{ if .Title }}
           <div class="hx:flex hx:flex-col hx:sm:flex-row hx:items-start hx:sm:items-center hx:sm:justify-between hx:gap-4 hx:mb-4">
-            <h1 class="hx:mb-0">{{ .Title }}</h1>
+            <h1 class="hx:mb-0{{ if .IsHome }} hx:mx-auto{{ end }}">{{ .Title }}</h1>
             {{ partial "components/page-context-menu" . }}
           </div>
           {{ end }}
+          <div {{- if .IsHome }} class="hx:text-center"{{ end }}>
           {{ .Content }}
+          </div>
           {{ with (where .Pages "Params.sidebar.exclude" "!=" true) }}
             {{ $sectionIcons := index site.Data.mapping "section-icons" }}
             {{ $cardsContent := "" }}

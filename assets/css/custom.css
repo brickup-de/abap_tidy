@@ -18,3 +18,7 @@
 .mermaid .italic {
   font-style: italic;
 }
+
+.hextra-toc:empty {
+  display: none !important;
+}
