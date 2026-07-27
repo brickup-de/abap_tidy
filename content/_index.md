@@ -1,6 +1,7 @@
 ---
 title: "Clean ABAP"
-aliases = ["/clean-abap"]
+aliases: 
+  - "/clean-abap/"
 weight: 1
 toc: false
 sidebar:
