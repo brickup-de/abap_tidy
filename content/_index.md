@@ -2,6 +2,7 @@
 title: "Clean ABAP"
 aliases: 
   - "/clean-abap/"
+  - "/clean-code/"
 weight: 1
 toc: false
 sidebar:
