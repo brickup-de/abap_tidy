@@ -1,12 +1,11 @@
 """
-Tests for scripts/utils.py's load_link_titles, load_file_config, and
-load_diagram_overrides.
+Tests for scripts/utils.py's MappingConfig.
 """
 import os
 import tempfile
 import unittest
 
-from scripts.utils import load_diagram_overrides, load_file_config, load_link_titles, remove_breadcrumb_lines
+from scripts.utils import MappingConfig, remove_breadcrumb_lines
 
 
 def write_mapping_toml(repo_root, text):
@@ -16,23 +15,61 @@ def write_mapping_toml(repo_root, text):
         f.write(text)
 
 
-class LoadLinkTitlesTests(unittest.TestCase):
-    def test_returns_empty_dict_when_mapping_file_does_not_exist(self):
-        with tempfile.TemporaryDirectory() as repo_root:
-            self.assertEqual(load_link_titles(repo_root), {})
+def load_with_files_table(repo_root, text):
+    # Every case below needs a valid [files] table (MappingConfig.load
+    # requires one) alongside whatever it's actually testing.
+    write_mapping_toml(repo_root, '[files]\nchapterize = ["CleanABAP.md"]\nkeep = []\n\n' + text)
+    return MappingConfig.load(repo_root)
 
-    def test_reads_the_linktitles_table_from_data_mapping_toml(self):
-        with tempfile.TemporaryDirectory() as repo_root:
-            write_mapping_toml(repo_root, '[linktitles]\n"how-to/how-to-get-started" = "Get Started"\n')
 
-            self.assertEqual(
-                load_link_titles(repo_root),
-                {"how-to/how-to-get-started": "Get Started"},
+class MappingConfigPreserveTests(unittest.TestCase):
+    def test_empty_when_content_preserve_is_absent(self):
+        with tempfile.TemporaryDirectory() as repo_root:
+            config = load_with_files_table(repo_root, '')
+            self.assertEqual(config.preserve, set())
+
+    def test_reads_the_content_preserve_list(self):
+        with tempfile.TemporaryDirectory() as repo_root:
+            config = load_with_files_table(repo_root, '[content]\npreserve = ["legal.md"]\n')
+            self.assertEqual(config.preserve, {'legal.md'})
+
+
+class MappingConfigLinkTitlesTests(unittest.TestCase):
+    def test_empty_when_linktitles_is_absent(self):
+        with tempfile.TemporaryDirectory() as repo_root:
+            config = load_with_files_table(repo_root, '')
+            self.assertEqual(config.link_titles, {})
+
+    def test_reads_the_linktitles_table(self):
+        with tempfile.TemporaryDirectory() as repo_root:
+            config = load_with_files_table(
+                repo_root, '[linktitles]\n"how-to/how-to-get-started" = "Get Started"\n',
             )
+            self.assertEqual(config.link_titles, {"how-to/how-to-get-started": "Get Started"})
 
 
-class LoadFileConfigTests(unittest.TestCase):
-    def test_reads_chapterize_and_keep_lists_from_data_mapping_toml(self):
+class MappingConfigDiagramsTests(unittest.TestCase):
+    def test_empty_when_diagrams_is_absent(self):
+        with tempfile.TemporaryDirectory() as repo_root:
+            config = load_with_files_table(repo_root, '')
+            self.assertEqual(config.diagrams, {})
+
+    def test_reads_the_diagrams_table(self):
+        with tempfile.TemporaryDirectory() as repo_root:
+            config = load_with_files_table(
+                repo_root,
+                "[diagrams]\n"
+                '"Foo.png" = \'\'\'\n'
+                "```mermaid\n"
+                "classDiagram\n"
+                "    A --> B\n"
+                "```\'\'\'\n",
+            )
+            self.assertEqual(config.diagrams, {"Foo.png": "```mermaid\nclassDiagram\n    A --> B\n```"})
+
+
+class MappingConfigFilesTests(unittest.TestCase):
+    def test_reads_chapterize_and_keep_lists(self):
         with tempfile.TemporaryDirectory() as repo_root:
             write_mapping_toml(
                 repo_root,
@@ -41,8 +78,10 @@ class LoadFileConfigTests(unittest.TestCase):
                 'keep = ["sub-sections/AvoidEncodings.md"]\n',
             )
 
+            config = MappingConfig.load(repo_root)
+
             self.assertEqual(
-                load_file_config(repo_root),
+                config.files,
                 {
                     'chapterize': ["CleanABAP.md", "sub-sections/ModernABAPLanguageElements.md"],
                     'keep': ["sub-sections/AvoidEncodings.md"],
@@ -52,43 +91,14 @@ class LoadFileConfigTests(unittest.TestCase):
     def test_raises_when_mapping_file_does_not_exist(self):
         with tempfile.TemporaryDirectory() as repo_root:
             with self.assertRaises(ValueError):
-                load_file_config(repo_root)
+                MappingConfig.load(repo_root)
 
     def test_raises_when_files_table_is_missing(self):
         with tempfile.TemporaryDirectory() as repo_root:
             write_mapping_toml(repo_root, '[linktitles]\n"chapter" = "Chapter"\n')
 
             with self.assertRaises(ValueError):
-                load_file_config(repo_root)
-
-
-class LoadDiagramOverridesTests(unittest.TestCase):
-    def test_returns_empty_dict_when_mapping_file_does_not_exist(self):
-        with tempfile.TemporaryDirectory() as repo_root:
-            self.assertEqual(load_diagram_overrides(repo_root), {})
-
-    def test_returns_empty_dict_when_diagrams_table_is_missing(self):
-        with tempfile.TemporaryDirectory() as repo_root:
-            write_mapping_toml(repo_root, '[linktitles]\n"chapter" = "Chapter"\n')
-
-            self.assertEqual(load_diagram_overrides(repo_root), {})
-
-    def test_reads_the_diagrams_table_from_data_mapping_toml(self):
-        with tempfile.TemporaryDirectory() as repo_root:
-            write_mapping_toml(
-                repo_root,
-                "[diagrams]\n"
-                '"Foo.png" = \'\'\'\n'
-                "```mermaid\n"
-                "classDiagram\n"
-                "    A --> B\n"
-                "```\'\'\'\n",
-            )
-
-            self.assertEqual(
-                load_diagram_overrides(repo_root),
-                {"Foo.png": "```mermaid\nclassDiagram\n    A --> B\n```"},
-            )
+                MappingConfig.load(repo_root)
 
 
 class RemoveBreadcrumbLinesTests(unittest.TestCase):

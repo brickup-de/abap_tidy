@@ -36,6 +36,7 @@ from scripts.main import (
     get_source_files, parse_main, parse_sub_sections, run_conversion,
     setup_output_dir, validate_cross_references,
 )
+from scripts.utils import MappingConfig
 
 
 def write_file(path, content):
@@ -71,7 +72,7 @@ class GetSourceFilesTests(unittest.TestCase):
                 keep=['sub-sections/AvoidEncodings.md'],
             )
 
-            result = get_source_files(repo_root)
+            result = get_source_files(repo_root, MappingConfig.load(repo_root).files)
 
         self.assertEqual(result['main'], os.path.join(clean_abap_dir, 'CleanABAP.md'))
         self.assertEqual(
@@ -97,7 +98,7 @@ class GetSourceFilesTests(unittest.TestCase):
             )
 
             with self.assertRaises(ValueError):
-                get_source_files(repo_root)
+                get_source_files(repo_root, MappingConfig.load(repo_root).files)
 
     def test_raises_when_a_sub_section_file_on_disk_is_not_listed(self):
         with tempfile.TemporaryDirectory() as repo_root:
@@ -107,7 +108,7 @@ class GetSourceFilesTests(unittest.TestCase):
             write_mapping_toml(repo_root, chapterize=['CleanABAP.md'], keep=[])
 
             with self.assertRaises(ValueError):
-                get_source_files(repo_root)
+                get_source_files(repo_root, MappingConfig.load(repo_root).files)
 
     def test_raises_when_no_main_file_is_listed_under_chapterize(self):
         with tempfile.TemporaryDirectory() as repo_root:
@@ -116,7 +117,7 @@ class GetSourceFilesTests(unittest.TestCase):
             write_mapping_toml(repo_root, chapterize=['sub-sections/AvoidEncodings.md'], keep=[])
 
             with self.assertRaises(ValueError):
-                get_source_files(repo_root)
+                get_source_files(repo_root, MappingConfig.load(repo_root).files)
 
 
 class ParseMainTests(unittest.TestCase):
@@ -199,7 +200,7 @@ def run_conversion_for_test(main_content, sub_sections, keep=(), diagrams=None):
             diagrams=diagrams,
         )
 
-        run_conversion(repo_root, output_dir)
+        run_conversion(repo_root, output_dir, MappingConfig.load(repo_root))
 
         generated = {}
         for root, _dirs, files in os.walk(output_dir):
@@ -328,7 +329,7 @@ class RunConversionDiagramOverrideTests(unittest.TestCase):
                 diagrams={'Foo.png': diagram_block},
             )
 
-            run_conversion(repo_root, output_dir)
+            run_conversion(repo_root, output_dir, MappingConfig.load(repo_root))
 
             dive_index = os.path.join(output_dir, 'deep-dives', 'some-dive', 'index.md')
             with open(dive_index, encoding='utf-8') as f:

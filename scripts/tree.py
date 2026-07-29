@@ -163,7 +163,7 @@ def _replace_images_with_diagrams(content: str, diagrams: Dict[str, str]) -> str
     """
     Replace any image reference whose basename is a key in diagrams (see
     data/mapping.toml's [diagrams] table, loaded via
-    scripts/utils.load_diagram_overrides) with the stored fenced ```mermaid
+    scripts/utils.MappingConfig.diagrams) with the stored fenced ```mermaid
     block, dropping the image markdown entirely. Images with no matching
     entry pass through untouched, for _fix_image_references to normalize as
     usual.

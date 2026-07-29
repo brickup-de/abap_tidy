@@ -8,18 +8,17 @@ import sys
 import shutil
 from typing import Dict, List, Optional, Set, Tuple
 
-from .utils import kebab_case, ensure_directory, github_anchor, load_diagram_overrides, load_file_config, load_link_titles, load_preserve_list
+from .utils import kebab_case, ensure_directory, github_anchor, MappingConfig
 from .frontmatter import generate_front_matter, get_deep_dives_source_url
 from .crossref import CrossReferenceConverter, build_path_mapping
 from .tree import Page, flatten_to_single_page, parse_tree, resolve_links, apply_text_fixups, walk
 from .writer import write_tree
 
 
-def get_source_files(base_dir: str) -> Dict[str, object]:
+def get_source_files(base_dir: str, file_config: Dict[str, List[str]]) -> Dict[str, object]:
     """
-    Resolve data/mapping.toml's [files] table (see load_file_config) against
-    the source files actually on disk under
-    assets/sap-styleguides/clean-abap/.
+    Resolve a MappingConfig's .files table against the source files actually
+    on disk under assets/sap-styleguides/clean-abap/.
 
     [files] is the sole source of truth for which source files get
     processed, and how -- 'chapterize' (split per heading, unchanged
@@ -33,7 +32,6 @@ def get_source_files(base_dir: str) -> Dict[str, object]:
         and 'keep_files' (set of sub_sections paths to render single-page).
     """
     clean_abap_dir = os.path.join(base_dir, 'assets', 'sap-styleguides', 'clean-abap')
-    file_config = load_file_config(base_dir)
 
     main_file = None
     sub_sections: List[str] = []
@@ -258,11 +256,11 @@ def setup_output_dir(output_dir: str, preserve: Optional[Set[str]] = None) -> No
             os.remove(entry_path)
 
 
-def run_conversion(repo_root: str, output_dir: str) -> None:
+def run_conversion(repo_root: str, output_dir: str, mapping_config: MappingConfig) -> None:
     """
     Run the full CleanABAP.md + sub-sections conversion into output_dir.
     """
-    source_files = get_source_files(repo_root)
+    source_files = get_source_files(repo_root, mapping_config.files)
 
     print("Starting Clean ABAP to Hugo conversion...")
     print(f"Source: {source_files['main']}")
@@ -281,8 +279,8 @@ def run_conversion(repo_root: str, output_dir: str) -> None:
     for _file_path, _folder_name, _tree, heading_data in sub_sections:
         all_heading_data.extend(heading_data)
 
-    link_titles = load_link_titles(repo_root)
-    diagrams = load_diagram_overrides(repo_root)
+    link_titles = mapping_config.link_titles
+    diagrams = mapping_config.diagrams
 
     write_main(main_tree, output_dir, source_files['main'], main_heading_data, all_heading_data, link_titles, diagrams)
     for file_path, folder_name, tree, heading_data in sub_sections:
@@ -381,9 +379,11 @@ def main():
     repo_root = os.path.dirname(script_dir)
     output_dir = os.path.join(repo_root, 'content')
 
-    setup_output_dir(output_dir, load_preserve_list(repo_root))
+    mapping_config = MappingConfig.load(repo_root)
+
+    setup_output_dir(output_dir, mapping_config.preserve)
     try:
-        run_conversion(repo_root, output_dir)
+        run_conversion(repo_root, output_dir, mapping_config)
     except ValueError as e:
         print(f"Error: {e}")
         sys.exit(1)

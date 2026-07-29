@@ -378,77 +378,62 @@ def ensure_directory(path: str) -> None:
     os.makedirs(path, exist_ok=True)
 
 
-def load_preserve_list(repo_root: str) -> Set[str]:
+class MappingConfig:
     """
-    Load data/mapping.toml's [content].preserve list: top-level entries
-    under content/ that setup_output_dir must not delete on rerun, e.g.
-    "legal.md" -- a hand-written page living alongside the generated tree.
-    Optional: returns an empty set if the file or table doesn't exist, so a
-    conversion run never depends on it (and starts out deleting everything,
-    the old behavior).
-    """
-    path = os.path.join(repo_root, 'data', 'mapping.toml')
-    if not os.path.exists(path):
-        return set()
-    with open(path, 'rb') as f:
-        data = tomllib.load(f)
-    return set(data.get('content', {}).get('preserve', []))
+    data/mapping.toml, read once and exposed as typed attributes:
 
+    - preserve: [content].preserve list -- top-level entries under content/
+      that setup_output_dir must not delete on rerun, e.g. "legal.md", a
+      hand-written page living alongside the generated tree.
+    - link_titles: [linktitles] table -- sidebar/breadcrumb short-title
+      overrides, keyed by each page's generated path under content/ (folder
+      slugs joined by "/", no leading/trailing slash -- see
+      scripts/writer.py's link_title lookup).
+    - diagrams: [diagrams] table -- keyed by an image's bare basename (e.g.
+      "InterfacesVsAbstractClasses-Interface.png"), values the complete
+      fenced ```mermaid block that should replace every reference to that
+      image (see scripts/tree.py's diagram-replacement fixup).
+    - files: [files] table -- which Clean ABAP source files to process and
+      how, 'chapterize' (split into one Hugo page per heading, the original
+      behavior) vs 'keep' (render as a single page). Paths are relative to
+      assets/sap-styleguides/clean-abap/.
 
-def load_link_titles(repo_root: str) -> Dict[str, str]:
+    preserve, link_titles and diagrams are optional and default to empty, so
+    a conversion run never depends on them. files is required -- it's the
+    sole source of truth for which source files exist (see
+    scripts/main.py's get_source_files) -- so a missing mapping.toml or a
+    missing [files] table raises rather than silently falling back to an
+    empty config.
     """
-    Load sidebar/breadcrumb short-title overrides from data/mapping.toml's
-    [linktitles] table, keyed by each page's generated path under content/
-    (folder slugs joined by "/", no leading/trailing slash -- see
-    scripts/writer.py's link_title lookup). Optional: returns {} if the
-    file doesn't exist, so a conversion run never depends on it.
-    """
-    path = os.path.join(repo_root, 'data', 'mapping.toml')
-    if not os.path.exists(path):
-        return {}
-    with open(path, 'rb') as f:
-        data = tomllib.load(f)
-    return data.get('linktitles', {})
 
+    def __init__(self, preserve: Set[str], link_titles: Dict[str, str],
+                 diagrams: Dict[str, str], files: Dict[str, List[str]]):
+        self.preserve = preserve
+        self.link_titles = link_titles
+        self.diagrams = diagrams
+        self.files = files
 
-def load_diagram_overrides(repo_root: str) -> Dict[str, str]:
-    """
-    Load data/mapping.toml's [diagrams] table, keyed by an image's bare
-    basename (e.g. "InterfacesVsAbstractClasses-Interface.png"), values the
-    complete fenced ```mermaid block that should replace every reference to
-    that image (see scripts/tree.py's diagram-replacement fixup). Optional:
-    returns {} if the file or table doesn't exist, so a conversion run never
-    depends on it.
-    """
-    path = os.path.join(repo_root, 'data', 'mapping.toml')
-    if not os.path.exists(path):
-        return {}
-    with open(path, 'rb') as f:
-        data = tomllib.load(f)
-    return data.get('diagrams', {})
+    @classmethod
+    def load(cls, repo_root: str) -> 'MappingConfig':
+        path = os.path.join(repo_root, 'data', 'mapping.toml')
+        if os.path.exists(path):
+            with open(path, 'rb') as f:
+                data = tomllib.load(f)
+        else:
+            data = {}
 
+        files = data.get('files')
+        if files is None:
+            if not os.path.exists(path):
+                raise ValueError(f"{path} does not exist, but is required for [files]")
+            raise ValueError(f"{path} is missing the required [files] table")
 
-def load_file_config(repo_root: str) -> Dict[str, List[str]]:
-    """
-    Load data/mapping.toml's [files] table: which Clean ABAP source files to
-    process and how -- 'chapterize' (split into one Hugo page per heading,
-    the original behavior) vs 'keep' (render as a single page). Paths are
-    relative to assets/sap-styleguides/clean-abap/.
-
-    Unlike load_link_titles, this is required -- it's the sole source of
-    truth for which source files exist (see scripts/main.py's
-    get_source_files), so a missing mapping.toml or a missing [files] table
-    raises rather than silently falling back to an empty config.
-    """
-    path = os.path.join(repo_root, 'data', 'mapping.toml')
-    if not os.path.exists(path):
-        raise ValueError(f"{path} does not exist, but is required for [files]")
-    with open(path, 'rb') as f:
-        data = tomllib.load(f)
-    files = data.get('files')
-    if files is None:
-        raise ValueError(f"{path} is missing the required [files] table")
-    return {
-        'chapterize': list(files.get('chapterize', [])),
-        'keep': list(files.get('keep', [])),
-    }
+        return cls(
+            preserve=set(data.get('content', {}).get('preserve', [])),
+            link_titles=data.get('linktitles', {}),
+            diagrams=data.get('diagrams', {}),
+            files={
+                'chapterize': list(files.get('chapterize', [])),
+                'keep': list(files.get('keep', [])),
+            },
+        )
