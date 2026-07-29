@@ -4,9 +4,36 @@ Converts markdown anchor links to absolute Hugo paths.
 """
 
 import re
-from typing import List, Dict
+from typing import List, Dict, Optional
 
 from .utils import kebab_case, github_anchor
+
+
+def _by_exact_anchor(anchor: str, mapping: Dict[str, str]) -> Optional[str]:
+    """Anchor matches a path_mapping key verbatim."""
+    return mapping.get(anchor)
+
+
+def _by_closest_heading(kebab_anchor: str, heading_cache: Dict[str, str]) -> Optional[str]:
+    """Anchor's GitHub-anchor form matches some heading's, via a precomputed cache."""
+    return heading_cache.get(kebab_anchor)
+
+
+def _by_prefix(kebab_anchor: str, mapping: Dict[str, str]) -> Optional[str]:
+    """Longest hyphen-separated prefix of the anchor that matches a mapping key."""
+    path_parts = kebab_anchor.split('-')
+    for i in range(len(path_parts), 0, -1):
+        candidate = '-'.join(path_parts[:i])
+        if candidate in mapping:
+            base_path = mapping[candidate]
+            remaining = '-'.join(path_parts[i:])
+            return f"{base_path}{remaining}/" if remaining else base_path
+    return None
+
+
+def _guessed_fallback(kebab_anchor: str) -> str:
+    """Last resort: construct a path from the anchor even if it was never seen."""
+    return f"/{kebab_anchor}/"
 
 
 class CrossReferenceConverter:
@@ -25,13 +52,13 @@ class CrossReferenceConverter:
     def __init__(self, path_mapping: Dict[str, str]):
         """
         Initialize with a mapping of heading text to paths.
-        
+
         Args:
             path_mapping: Dictionary mapping heading text (lowercase) to Hugo paths
         """
         self.path_mapping = path_mapping
-        self.conversion_cache = {}
-    
+        self.conversion_cache: Optional[Dict[str, str]] = None
+
     def convert_link(self, link_text: str, anchor: str) -> str:
         """
         Convert a single markdown link's text/anchor to a Hugo path.
@@ -78,46 +105,36 @@ class CrossReferenceConverter:
                 return f"[{link_text}]({url})"
         elif anchor.startswith('#'):
             anchor = anchor[1:]
-        
-        # Look up the anchor in our path mapping
-        # Try exact match first
-        if anchor in self.path_mapping:
-            hugo_path = self.path_mapping[anchor]
-            return f"[{link_text}]({hugo_path})"
-        
-        # Try GitHub-anchor version
+
+        return f"[{link_text}]({self._resolve_anchor(anchor)})"
+
+    def _resolve_anchor(self, anchor: str) -> str:
+        """
+        Resolve a bare anchor to a Hugo path, trying each strategy in order
+        until one succeeds. The last strategy always succeeds.
+        """
         kebab_anchor = github_anchor(anchor)
-        if kebab_anchor in self.path_mapping:
-            hugo_path = self.path_mapping[kebab_anchor]
-            return f"[{link_text}]({hugo_path})"
+        return (
+            _by_exact_anchor(anchor, self.path_mapping)
+            or _by_exact_anchor(kebab_anchor, self.path_mapping)
+            or _by_closest_heading(kebab_anchor, self._heading_cache())
+            or _by_prefix(kebab_anchor, self.path_mapping)
+            or _guessed_fallback(kebab_anchor)
+        )
 
-        # Try to find the closest match
-        # This handles cases where the anchor might be slightly different
-        for heading, path in self.path_mapping.items():
-            if github_anchor(heading) == kebab_anchor:
-                return f"[{link_text}]({path})"
-        
-        # If we can't find a match, try to construct a reasonable path
-        # This is a fallback for references we couldn't map
-        path_parts = kebab_anchor.split('-')
-        if path_parts:
-            # Try to find the best parent match
-            for i in range(len(path_parts), 0, -1):
-                candidate = '-'.join(path_parts[:i])
-                if candidate in self.path_mapping:
-                    base_path = self.path_mapping[candidate]
-                    remaining = '-'.join(path_parts[i:])
-                    if remaining:
-                        return f"[{link_text}]({base_path}{remaining}/)"
-                    return f"[{link_text}]({base_path})"
-        
-        # Last resort: return original link but with a leading slash
-        # This handles external links or links we can't resolve
-        if anchor.startswith('http') or anchor.startswith('/'):
-            return f"[{link_text}]({anchor})"
-
-        # For internal links that we couldn't resolve, use a reasonable default
-        return f"[{link_text}](/{kebab_anchor}/)"
+    def _heading_cache(self) -> Dict[str, str]:
+        """
+        Lazily build and memoize a github_anchor(heading) -> path lookup for
+        every heading in path_mapping, so the closest-heading strategy is an
+        O(1) lookup instead of an O(n) recompute on every call. First heading
+        to produce a given anchor wins, matching the original linear scan.
+        """
+        if self.conversion_cache is None:
+            cache: Dict[str, str] = {}
+            for heading, path in self.path_mapping.items():
+                cache.setdefault(github_anchor(heading), path)
+            self.conversion_cache = cache
+        return self.conversion_cache
 
     def convert_content(self, content: str) -> str:
         """
