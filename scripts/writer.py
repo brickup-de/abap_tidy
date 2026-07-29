@@ -53,8 +53,14 @@ def write_tree(
     return _write_page(root, base_path, source_file, is_subsection, content_root, link_titles)
 
 
+# Redirects from the old "Tidy ABAP" umbrella site's homepage URLs
+_ROOT_ALIASES = ["/clean-abap/", "/clean-code/"]
+
+
 def _write_root_page(root: Page, base_path: str) -> int:
-    front_matter = generate_front_matter(title=root.title, weight=1, source=get_root_source_url(), sidebar_hide=True)
+    front_matter = generate_front_matter(
+        title=root.title, weight=1, source=get_root_source_url(), sidebar_hide=True, aliases=_ROOT_ALIASES,
+    )
     content = front_matter
     if root.content:
         content += f"\n{root.content}\n"

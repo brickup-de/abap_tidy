@@ -2,7 +2,7 @@
 Front matter generation for Hugo content pages.
 """
 
-from typing import Optional
+from typing import List, Optional
 
 from .utils import github_anchor
 
@@ -31,7 +31,8 @@ def generate_front_matter(
     weight: int,
     source: str,
     link_title: Optional[str] = None,
-    sidebar_hide: bool = False
+    sidebar_hide: bool = False,
+    aliases: Optional[List[str]] = None,
 ) -> str:
     """
     Generate Hugo front matter in YAML format.
@@ -50,6 +51,8 @@ def generate_front_matter(
             entirely when None, so most pages carry no redundant field.
         sidebar_hide: When True, emits `sidebar: hide: true` to hide this
             page's own entry from the sidebar (its children still show).
+        aliases: Optional list of redirect paths (Hugo's native aliases
+            field). Omitted from the output entirely when None/empty.
 
     Returns:
         YAML front matter string
@@ -57,6 +60,10 @@ def generate_front_matter(
     lines = ['---', f'title: "{escape_yaml_string(title)}"']
     if link_title:
         lines.append(f'linkTitle: "{escape_yaml_string(link_title)}"')
+    if aliases:
+        lines.append('aliases:')
+        for alias in aliases:
+            lines.append(f'  - "{escape_yaml_string(alias)}"')
     lines.append(f'weight: {weight}')
     if sidebar_hide:
         lines.append('toc: false')

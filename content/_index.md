@@ -1,6 +1,6 @@
 ---
 title: "Clean ABAP"
-aliases: 
+aliases:
   - "/clean-abap/"
   - "/clean-code/"
 weight: 1
