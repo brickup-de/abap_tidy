@@ -16,7 +16,7 @@
           {{ .Content }}
           </div>
           {{ with (where .Pages "Params.sidebar.exclude" "!=" true) }}
-            {{ $sectionIcons := index site.Data.mapping "section-icons" }}
+            {{ $sectionIcons := index hugo.Data.mapping "section-icons" }}
             {{ $cardsContent := "" }}
             {{ range . }}
               {{ $relPath := strings.TrimPrefix "/" .Path }}
